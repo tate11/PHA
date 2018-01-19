@@ -64,7 +64,7 @@ class IntrastatCommon(models.AbstractModel):
         try:
             t = etree.parse(StringIO(xml_string))
             official_schema.assertValid(t)
-        except Exception, e:
+        except Exception as e:
             # if the validation of the XSD fails, we arrive here
             logger = logging.getLogger(__name__)
             logger.warning(
