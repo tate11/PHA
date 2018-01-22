@@ -4,7 +4,7 @@
         <record id="view_product_template_calculatrice_form" model="ir.ui.view">
             <field name="name">view.product.template.calculatrice.form</field>
             <field name="model">product.product</field>
-            <field name="inherit_id" ref="product.product_normal_form_view"/>
+            <field name="inherit_id" ref="product.product_template_only_form_view"/>
             <field name="arch" type="xml">
                 <xpath expr="//page[@name='sales']" position="after">
                     <page name="Calculette" string="Calculette">

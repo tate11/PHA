@@ -22,7 +22,7 @@
 
 {
     'name' : 'ES Product Calculatrice',
-    'version' : '1.0',
+    'version' : '11.0',
     'depends' : ['base', 'product', 'sale', 'crm',],
     'author' : 'GFI',
     'category': '',
@@ -36,7 +36,7 @@
     'data': [
         'views/product_view.xml',
     ],
-    'installable': False,
+    'installable': True,
     'auto_install': False,
 }
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
