@@ -1,0 +1,139 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+#	* product_extended_calculatrice
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 9.0e\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2017-02-28 10:32+0000\n"
+"PO-Revision-Date: 2017-02-28 10:32+0000\n"
+"Last-Translator: <>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: product_extended_calculatrice
+#: model:ir.model.fields,help:product_extended_calculatrice.field_product_product_prix_achat_ttc
+msgid "(PA HT + frais transport) + TVA"
+msgstr "(PA HT + frais transport) + TVA"
+
+#. module: product_extended_calculatrice
+#: model:ir.ui.view,arch_db:product_extended_calculatrice.view_product_template_calculatrice_form
+msgid "Calculette"
+msgstr "Calculette"
+
+#. module: product_extended_calculatrice
+#: model:ir.model.fields,field_description:product_extended_calculatrice.field_product_product_coef_multi_hide
+msgid "Coef. multiplicateur"
+msgstr "Coef. multiplicateur"
+
+#. module: product_extended_calculatrice
+#: model:ir.model.fields,field_description:product_extended_calculatrice.field_product_product_coef_multi
+msgid "Coefficient multiplicateur"
+msgstr "Coefficient multiplicateur"
+
+#. module: product_extended_calculatrice
+#: model:ir.model.fields,field_description:product_extended_calculatrice.field_product_product_montant_audit
+msgid "Cout Audit"
+msgstr "Cout Audit"
+
+#. module: product_extended_calculatrice
+#: model:ir.model.fields,field_description:product_extended_calculatrice.field_product_product_prix_achat_ttc
+#: model:ir.model.fields,field_description:product_extended_calculatrice.field_product_product_prix_achat_ttc_hide
+msgid "Cout revient  TTC"
+msgstr "Cout revient  TTC"
+
+#. module: product_extended_calculatrice
+#: model:ir.model.fields,field_description:product_extended_calculatrice.field_product_product_frais_transport
+msgid "Frais transport HT"
+msgstr "Frais transport HT"
+
+#. module: product_extended_calculatrice
+#: model:ir.model.fields,field_description:product_extended_calculatrice.field_product_product_cout_manutention
+msgid "Manutention Price"
+msgstr "Prix de maintenance "
+
+#. module: product_extended_calculatrice
+#: model:ir.model.fields,field_description:product_extended_calculatrice.field_product_product_montant_marge_hide
+msgid "Marge brute"
+msgstr "Marge brute"
+
+#. module: product_extended_calculatrice
+#: model:ir.model.fields,help:product_extended_calculatrice.field_product_product_montant_marge
+msgid "Marge brute = PV HT - PA HT"
+msgstr "Marge brute = PV HT - PA HT"
+
+#. module: product_extended_calculatrice
+#: model:ir.model.fields,field_description:product_extended_calculatrice.field_product_product_montant_marge
+msgid "Marge brute sur PV"
+msgstr "Marge brute sur PV"
+
+#. module: product_extended_calculatrice
+#: model:ir.model.fields,help:product_extended_calculatrice.field_product_product_coef_multi
+msgid "PV TTC / COUT REVIENT HT"
+msgstr "PV TTC / COUT REVIENT HT"
+
+#. module: product_extended_calculatrice
+#: model:ir.model.fields,field_description:product_extended_calculatrice.field_product_product_prix_achat_ht
+msgid "Prix achat HT"
+msgstr "Prix achat HT"
+
+#. module: product_extended_calculatrice
+#: model:ir.model.fields,field_description:product_extended_calculatrice.field_product_product_prix_vente_ht
+msgid "Prix vente HT"
+msgstr "Prix vente HT"
+
+#. module: product_extended_calculatrice
+#: model:ir.model.fields,field_description:product_extended_calculatrice.field_product_product_prix_vente_ttc
+msgid "Prix vente TTC"
+msgstr "Prix vente TTC"
+
+#. module: product_extended_calculatrice
+#: model:ir.model,name:product_extended_calculatrice.model_product_product
+msgid "Product"
+msgstr "Article"
+
+#. module: product_extended_calculatrice
+#: selection:product.product,type_tva2:0
+msgid "TVA Classique"
+msgstr "TVA Classique"
+
+#. module: product_extended_calculatrice
+#: selection:product.product,type_tva2:0
+msgid "TVA sur marge"
+msgstr "TVA sur marge"
+
+#. module: product_extended_calculatrice
+#: model:ir.model.fields,field_description:product_extended_calculatrice.field_product_product_taux_marge
+msgid "Taux de marge"
+msgstr "Taux de marge"
+
+#. module: product_extended_calculatrice
+#: model:ir.model.fields,help:product_extended_calculatrice.field_product_product_taux_marge
+msgid "Taux de marge = (( PV HT - PA HT)) / PA HT ) * 100"
+msgstr "Taux de marge = (( PV HT - PA HT)) / PA HT ) * 100"
+
+#. module: product_extended_calculatrice
+#: model:ir.model.fields,field_description:product_extended_calculatrice.field_product_product_taux_marque
+#: model:ir.model.fields,field_description:product_extended_calculatrice.field_product_product_taux_marque_hide
+msgid "Taux de marque"
+msgstr "Taux de marque"
+
+#. module: product_extended_calculatrice
+#: model:ir.model.fields,help:product_extended_calculatrice.field_product_product_taux_marque
+msgid "Taux de marque = (( PV HT - PA HT)) / PV HT ) * 100"
+msgstr "Taux de marque = (( PV HT - PA HT)) / PV HT ) * 100"
+
+#. module: product_extended_calculatrice
+#: model:ir.model.fields,field_description:product_extended_calculatrice.field_product_product_taux_tva
+msgid "Taux tva"
+msgstr "Taux tva"
+
+#. module: product_extended_calculatrice
+#: model:ir.model.fields,field_description:product_extended_calculatrice.field_product_product_type_tva2
+msgid "Type de TVA"
+msgstr "Type de TVA"
+

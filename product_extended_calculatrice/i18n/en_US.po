@@ -1,0 +1,139 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+#	* product_extended_calculatrice
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 9.0e\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2017-02-28 10:31+0000\n"
+"PO-Revision-Date: 2017-02-28 10:31+0000\n"
+"Last-Translator: <>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: product_extended_calculatrice
+#: model:ir.model.fields,help:product_extended_calculatrice.field_product_product_prix_achat_ttc
+msgid "(Buying price Duty-Free + Shipping costs) + VAT"
+msgstr "(Buying price Duty-Free + Shipping costs) + VAT"
+
+#. module: product_extended_calculatrice
+#: model:ir.ui.view,arch_db:product_extended_calculatrice.view_product_template_calculatrice_form
+msgid "Calculator"
+msgstr "Calculator"
+
+#. module: product_extended_calculatrice
+#: model:ir.model.fields,field_description:product_extended_calculatrice.field_product_product_coef_multi_hide
+msgid "Multiplier"
+msgstr "Multiplier"
+
+#. module: product_extended_calculatrice
+#: model:ir.model.fields,field_description:product_extended_calculatrice.field_product_product_coef_multi
+msgid "Multiplier"
+msgstr "Multiplier"
+
+#. module: product_extended_calculatrice
+#: model:ir.model.fields,field_description:product_extended_calculatrice.field_product_product_montant_audit
+msgid "Audit cost"
+msgstr "Audit cost"
+
+#. module: product_extended_calculatrice
+#: model:ir.model.fields,field_description:product_extended_calculatrice.field_product_product_prix_achat_ttc
+#: model:ir.model.fields,field_description:product_extended_calculatrice.field_product_product_prix_achat_ttc_hide
+msgid "Returns cost including taxes"
+msgstr "Returns cost including taxes"
+
+#. module: product_extended_calculatrice
+#: model:ir.model.fields,field_description:product_extended_calculatrice.field_product_product_frais_transport
+msgid "Transportation costs duty-free"
+msgstr "Transportation costs duty-free"
+
+#. module: product_extended_calculatrice
+#: model:ir.model.fields,field_description:product_extended_calculatrice.field_product_product_cout_manutention
+msgid "Manutention Price"
+msgstr "Manutention Price"
+
+#. module: product_extended_calculatrice
+#: model:ir.model.fields,field_description:product_extended_calculatrice.field_product_product_montant_marge_hide
+msgid "Cash Flow"
+msgstr "Cash Flow"
+
+#. module: product_extended_calculatrice
+#: model:ir.model.fields,help:product_extended_calculatrice.field_product_product_montant_marge
+msgid "Cash Flow = Duty-Free Sale Price - Duty-Free Buying price"
+msgstr "Cash Flow = Duty-Free Sale Price - Duty-Free Buying price"
+
+#. module: product_extended_calculatrice
+#: model:ir.model.fields,field_description:product_extended_calculatrice.field_product_product_montant_marge
+msgid "Cash Flow on Sale Price"
+msgstr "Cash Flow on Sale Price"
+
+#. module: product_extended_calculatrice
+#: model:ir.model.fields,help:product_extended_calculatrice.field_product_product_coef_multi
+msgid "Including taxes Sale Price / Duty-Free Cost of production"
+msgstr "Including taxes Sale Price All taxes included / Duty-Free Cost of production"
+
+#. module: product_extended_calculatrice
+#: model:ir.model.fields,field_description:product_extended_calculatrice.field_product_product_prix_achat_ht
+msgid "Buying price Duty-Free"
+msgstr "Buying price Duty-Free"
+
+#. module: product_extended_calculatrice
+#: model:ir.model.fields,field_description:product_extended_calculatrice.field_product_product_prix_vente_ht
+msgid "Sell ​​price Duty-Free"
+msgstr "Sell ​​price Duty-Free"
+
+#. module: product_extended_calculatrice
+#: model:ir.model.fields,field_description:product_extended_calculatrice.field_product_product_prix_vente_ttc
+msgid "Sell ​​price All taxes included"
+msgstr "Sell ​​price All taxes included"
+
+#. module: product_extended_calculatrice
+#: model:ir.model,name:product_extended_calculatrice.model_product_product
+msgid "Product"
+msgstr "Product"
+
+#. module: product_extended_calculatrice
+#: selection:product.product,type_tva2:0
+msgid "Classic VAT"
+msgstr "Classic VAT"
+
+#. module: product_extended_calculatrice
+#: selection:product.product,type_tva2:0
+msgid "VAT On Margin"
+msgstr "VAT On Margin"
+
+#. module: product_extended_calculatrice
+#: model:ir.model.fields,field_description:product_extended_calculatrice.field_product_product_taux_marge
+msgid "Margin rate"
+msgstr "Margin rate"
+
+#. module: product_extended_calculatrice
+#: model:ir.model.fields,help:product_extended_calculatrice.field_product_product_taux_marge
+msgid "Margin Rate = (( Sell ​​price Duty-Free - Buying price Duty-Free)) / Buying price Duty-Free ) * 100"
+msgstr "Margin rate = (( Sell ​​price Duty-Free - Buying price Duty-Free)) / Buying price Duty-Free ) * 100"
+
+#. module: product_extended_calculatrice
+#: model:ir.model.fields,field_description:product_extended_calculatrice.field_product_product_taux_marque
+#: model:ir.model.fields,field_description:product_extended_calculatrice.field_product_product_taux_marque_hide
+msgid "Brand taxes"
+msgstr "Brand taxes"
+
+#. module: product_extended_calculatrice
+#: model:ir.model.fields,help:product_extended_calculatrice.field_product_product_taux_marque
+msgid "Brand taxes = (( Sell ​​price Duty-Free - Buying price Duty-Free)) / Sell ​​price Duty-Free ) * 100"
+msgstr "Brand taxes = (( Sell ​​price  Duty-Free - Buying price Duty-Free)) / Sell ​​price Duty-Free ) * 100"
+
+#. module: product_extended_calculatrice
+#: model:ir.model.fields,field_description:product_extended_calculatrice.field_product_product_taux_tva
+msgid "VAT rate"
+msgstr "VAT rate"
+
+#. module: product_extended_calculatrice
+#: model:ir.model.fields,field_description:product_extended_calculatrice.field_product_product_type_tva2
+msgid "VAT Type"
+msgstr "VAT Type"
+
