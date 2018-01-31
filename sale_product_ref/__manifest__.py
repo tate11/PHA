@@ -12,6 +12,8 @@
     ],
     'data': [
         "views/product_template.xml",
-        "views/sale_order_view.xml"
+        "views/sale_order_view.xml",
+        "reports/report_stockpicking_operations.xml",
+        "reports/report_deliveryslip.xml",
     ]
 }

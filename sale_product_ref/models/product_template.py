@@ -4,6 +4,10 @@ import logging
 class sale_product_ref(models.Model):
     _name= "sale.product.ref"
     _rec_name = "label"
+
+    sequence = fields.Integer('sequence',
+                              help="Sequence for the handle.")
+
     ref =fields.Char(string="reference",
                      required= True)
 
@@ -12,7 +16,7 @@ class sale_product_ref(models.Model):
 
     price =fields.Float(string="price",
                         required= True,)
-    prd_tmpl_id = fields.Many2one(comodel="product.template", default= lambda self: self._get_default_price())
+
 
     _sql_constraints = [
         ('ref_unique',
@@ -35,6 +39,5 @@ class sale_product_ref(models.Model):
 class product_template(models.Model):
     _inherit = "product.template"
 
-    product_ref_list = fields.One2many("sale.product.ref",
-                                       "prd_tmpl_id",
-                                       "product refs")
+    product_ref_list = fields.Many2many("sale.product.ref",
+                                       string="product refs")

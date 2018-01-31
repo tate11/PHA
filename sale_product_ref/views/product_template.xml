@@ -13,8 +13,12 @@
     <field name="inherit_id" ref="product.product_template_only_form_view"/>
     <field name="arch" type="xml">
              <xpath expr="//page[@name='sales']" position="inside">
-                 <field name="product_ref_list" context="{'default_price': list_price}">
+                 <field name="product_ref_list"
+                        context="{'default_price': list_price}"
+                         widget="one2many"
+                 >
                      <tree editable="bottom">
+                         <field name="sequence" widget="handle"/>
                          <field name="ref"></field>
                          <field name="label"></field>
                          <field name="price" ></field>
