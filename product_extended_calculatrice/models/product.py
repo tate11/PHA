@@ -19,56 +19,54 @@
 #
 ##############################################################################
 
-from openerp.exceptions import Warning
+from odoo.exceptions import Warning
 import logging
-from openerp.osv import osv, fields
-from openerp import SUPERUSER_ID
+from odoo import models, fields
+from odoo import SUPERUSER_ID
 from lxml import etree
 
-import openerp.addons.decimal_precision as dp
+import odoo.addons.decimal_precision as dp
 
 _logger = logging.getLogger(__name__)
 
 
-class product_product(osv.osv):
+class product_product(models.Model):
     _inherit = "product.product"
-    
-    #AMA : ajout calculette
-    _columns = {
-          # 'product_supplier_id': fields.one2many('product.supplierinfo', 'product_tmpl_id', 'Supplier'),
-          # 'pricelist_ids': fields.one2many('pricelist.partnerinfo', 'suppinfo_id', 'Supplier Pricelist', copy=True),
-            'prix_achat_ht': fields.float('Prix achat HT', digits_compute=dp.get_precision('Product Price')),
-            'frais_transport': fields.float('Frais transport HT', digits_compute=dp.get_precision('Product Price')),
-            'prix_achat_ttc_hide': fields.float('Cout revient  TTC', digits_compute=dp.get_precision('Product Price'), store=True),
-            'prix_achat_ttc':fields.related('prix_achat_ttc_hide', string="Cout revient  TTC", help="(PA HT + frais transport) + TVA"),
-            'taux_tva': fields.float('Taux tva', digits_compute=dp.get_precision('Product Price')),
-            'cout_manutention': fields.float('Manutention Price', digits_compute=dp.get_precision('Manutention Price')),
-            'prix_vente_ht': fields.float('Prix vente HT', digits_compute=dp.get_precision('Product Price')),
-            'prix_vente_ttc': fields.float('Prix vente TTC', digits_compute=dp.get_precision('Product Price')),
-            'taux_marge': fields.float('Taux de marge', digits_compute=dp.get_precision('Product Price'),
-                            help="Taux de marge = (( PV HT - PA HT)) / PA HT ) * 100"),
 
-            'montant_marge_hide': fields.float('Marge brute', digits_compute=dp.get_precision('Product Price'),),
-            'montant_audit': fields.float('Cout Audit', digits_compute=dp.get_precision('Audit Price'), ),
-            'montant_marge':fields.related('montant_marge_hide', string="Marge brute sur PV", help="Marge brute = PV HT - PA HT"),
-            'coef_multi_hide': fields.float(string='Coef. multiplicateur', digits_compute=dp.get_precision('Product Price')),
-            'coef_multi' : fields.related('coef_multi_hide', string="Coefficient multiplicateur", help="PV TTC / COUT REVIENT HT"),
-            'taux_marque_hide': fields.float('Taux de marque', digits_compute=dp.get_precision('Product Price')),
-            'taux_marque' : fields.related("taux_marque_hide", string="Taux de marque", help="Taux de marque = (( PV HT - PA HT)) / PV HT ) * 100"),
-            'type_tva2': fields.selection((('n', 'TVA Classique'), ('c', 'TVA sur marge')), 'Type de TVA', default='n')
-    }
-    
+
+
+    prix_achat_ht= fields.Float('Prix achat HT', digits_compute=dp.get_precision('Product Price'))
+    frais_transport=fields.Float('Frais transport HT', digits_compute=dp.get_precision('Product Price'))
+    prix_achat_ttc_hide= fields.Float('Cout revient  TTC', digits_compute=dp.get_precision('Product Price'), store=True)
+    prix_achat_ttc=fields.Float(related='prix_achat_ttc_hide', string="Cout revient  TTC", help="(PA HT + frais transport) + TVA")
+    taux_tva= fields.Float('Taux tva', digits_compute=dp.get_precision('Product Price'))
+    cout_manutention=fields.Float('Manutention Price', digits_compute=dp.get_precision('Manutention Price'))
+    prix_vente_ht= fields.Float('Prix vente HT', digits_compute=dp.get_precision('Product Price'))
+    prix_vente_ttc=fields.Float('Prix vente TTC', digits_compute=dp.get_precision('Product Price'))
+    taux_marge= fields.Float('Taux de marge', digits_compute=dp.get_precision('Product Price'),
+                            help="Taux de marge = (( PV HT - PA HT)) / PA HT ) * 100")
+
+    montant_marge_hide=fields.Float('Marge brute', digits_compute=dp.get_precision('Product Price'),)
+    montant_audit= fields.Float('Cout Audit', digits_compute=dp.get_precision('Audit Price'), )
+    montant_marge=fields.Float(related='montant_marge_hide', string="Marge brute sur PV", help="Marge brute = PV HT - PA HT")
+    coef_multi_hide= fields.Float(string='Coef. multiplicateur', digits_compute=dp.get_precision('Product Price'))
+    coef_multi= fields.Float(related='coef_multi_hide', string="Coefficient multiplicateur", help="PV TTC / COUT REVIENT HT")
+    taux_marque_hide= fields.Float('Taux de marque', digits_compute=dp.get_precision('Product Price'))
+    taux_marque= fields.Float(related="taux_marque_hide", string="Taux de marque", help="Taux de marque = (( PV HT - PA HT)) / PV HT ) * 100")
+    type_tva2=fields.Selection((('n', 'TVA Classique'), ('c', 'TVA sur marge')), 'Type de TVA', default='n')
+
+
     _defaults = {
         'taux_tva': 20.0,
         'taux_marge':0.0,
         'montant_marge':0.0,
         'taux_marque':0.0,
-        #'prix_vente_ht' : lambda self, cr, uid, context: self.pool.get('product.template').browse(cr, uid, uid, context=context).list_price,
+
     }
 
 
     
-    def prix_achat_ht_change(self, cr, uid, ids, prix_achat_ht, frais_transport, prix_vente_ht, taux_tva,  context=None):
+    def prix_achat_ht_change(self, ids, prix_achat_ht, frais_transport, prix_vente_ht, taux_tva,  context=None):
         if not prix_achat_ht:
             return {}
         result = {}
@@ -99,7 +97,7 @@ class product_product(osv.osv):
         
         return {'value': result}
     
-    def tva_change(self, cr, uid, ids, prix_achat_ht,frais_transport, prix_vente_ht, taux_tva, montant_marge,  context=None):
+    def tva_change(self,  prix_achat_ht,frais_transport, prix_vente_ht, taux_tva, montant_marge):
         result = {}
         coef_tva = 1 + (taux_tva / 100)
         prix_achat_trans = prix_achat_ht + frais_transport
@@ -119,7 +117,7 @@ class product_product(osv.osv):
         
         return {'value': result}
     
-    def prix_vente_ht_change(self, cr, uid, ids, prix_vente_ht, prix_achat_ht, frais_transport, taux_tva, context=None):
+    def prix_vente_ht_change(self,  prix_vente_ht, prix_achat_ht, frais_transport, taux_tva):
         result = {}
         coef_tva = 1 + (taux_tva / 100)
         prix_achat_trans = prix_achat_ht + frais_transport
@@ -146,7 +144,7 @@ class product_product(osv.osv):
             
         return {'value': result}
     
-    def prix_vente_ttc_change(self, cr, uid, ids, prix_vente_ttc, prix_achat_ht, frais_transport, taux_tva, context=None):
+    def prix_vente_ttc_change(self,  prix_vente_ttc, prix_achat_ht, frais_transport, taux_tva):
         result = {}
         coef_tva = 1 + (taux_tva / 100)
         prix_achat_trans = prix_achat_ht + frais_transport
@@ -172,7 +170,7 @@ class product_product(osv.osv):
             
         return {'value': result}
     
-    def taux_marge_change(self, cr, uid, ids, prix_achat_ht, frais_transport, taux_marge, taux_tva, context=None):
+    def taux_marge_change(self,  prix_achat_ht, frais_transport, taux_marge, taux_tva):
         result = {}
         coef_tva = 1 + (taux_tva / 100)
         coef_marge = 1 + (taux_marge / 100)
