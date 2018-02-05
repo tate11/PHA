@@ -16,6 +16,7 @@
                  <field name="travee"/>
                  <field name="colonne"/>
                  <field name="etagere"/>
+                 <field name="location"/>
              </xpath>
     </field>
 </record>
