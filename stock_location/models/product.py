@@ -16,4 +16,4 @@ class product_template(models.Model):
     def _compute_location(self):
 
 
-        self.location = self.travee+"/"+self.colonne+"/"+self.etagere
+        self.location = str(self.travee)+"/"+str(self.colonne)+"/"+str(self.etagere)
