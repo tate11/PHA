@@ -14,7 +14,7 @@ class sale_order_line(models.Model):
     @api.onchange('sale_product_ref')
     def onchange_prd_ref(self):
         self.price_unit = self.sale_product_ref.price
-        self.name=  "["+str(self.sale_product_ref.label)+"] "+str(self.name).split('] ')[-1]
+        self.name=  "["+str(self.sale_product_ref.ref)+"] "+str(self.name).split('] ')[-1]
 
     def _ref_domain(self):
         logging.warning("DOMAIN -> "+str(self._context))

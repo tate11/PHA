@@ -15,9 +15,9 @@
                  >
                      <tree editable="bottom">
                          <field name="sequence" widget="handle"/>
-                         <field name="ref"></field>
-                         <field name="label"></field>
-                         <field name="price" ></field>
+                         <field name="ref" string="Référence"></field>
+                         <field name="label" string="Libellé"></field>
+                         <field name="price" string = "Prix"></field>
                      </tree>
                  </field>
             </xpath>

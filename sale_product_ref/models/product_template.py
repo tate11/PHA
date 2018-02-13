@@ -3,7 +3,7 @@ from openerp import models, fields
 import logging
 class sale_product_ref(models.Model):
     _name= "sale.product.ref"
-    _rec_name = "label"
+    _rec_name = "ref"
 
     sequence = fields.Integer('sequence',
                               help="Sequence for the handle.")
