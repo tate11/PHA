@@ -21,7 +21,7 @@
 
 from odoo.exceptions import Warning
 import logging
-from odoo import models, fields
+from odoo import models, fields, api
 from odoo import SUPERUSER_ID
 from lxml import etree
 
@@ -64,139 +64,138 @@ class product_product(models.Model):
 
     }
 
+    @api.onchange('prix_achat_ht','frais_transport','prix_vente_ht','taux_tva')
+    def prix_achat_ht_change(self):
+        if not self.prix_achat_ht:
+            return False
+        coef_tva = 1 + (self.taux_tva / 100)
+        prix_achat_trans = self.prix_achat_ht + self.frais_transport
+        
+        self.prix_achat_ttc_hide = prix_achat_trans * coef_tva
+        self.prix_achat_ttc = self.prix_achat_ttc_hide
+        
+        self.montant_marge = self.prix_vente_ht - prix_achat_trans
+        self.montant_marge_hide = self.montant_marge
 
-    
-    def prix_achat_ht_change(self, ids, prix_achat_ht, frais_transport, prix_vente_ht, taux_tva,  context=None):
-        if not prix_achat_ht:
-            return {}
+        if self.montant_marge > 0:
+            self.taux_marge = (self.montant_marge / prix_achat_trans) * 100
+            self.taux_marque_hide = (self.montant_marge / self.prix_vente_ht) * 100
+            self.taux_marque = self.taux_marque_hide
+
+            self.prix_vente_ttc = self.prix_vente_ht * coef_tva
+            self.coef_multi_hide = self.prix_vente_ttc / prix_achat_trans
+            self.coef_multi = self.coef_multi_hide
+        else:
+            self.taux_marge = 0
+            self.coef_multi_hide = 0
+            self.coef_multi = self.coef_multi_hide
+            self.taux_marque_hide = 0
+            self.taux_marque = self.taux_marque_hide
+
+    @api.onchange('prix_achat_ht','frais_transport','prix_vente_ht','taux_tva','montant_marge')
+    def tva_change(self):
         result = {}
-        coef_tva = 1 + (taux_tva / 100)
-        prix_achat_trans = prix_achat_ht + frais_transport
+        self.coef_tva = 1 + (self.taux_tva / 100)
+        self.prix_achat_trans =self. prix_achat_ht + self.frais_transport
+        self.prix_vente_ttc =self.prix_vente_ht *self.coef_tva
+
+        self.prix_achat_ttc_hide = self.prix_achat_trans * self.coef_tva
+        self.prix_achat_ttc = self.prix_achat_ttc_hide
+
+        self.prix_vente_ttc = self.prix_vente_ttc
         
-        result['prix_achat_ttc_hide'] = prix_achat_trans * coef_tva
-        result['prix_achat_ttc'] = result['prix_achat_ttc_hide']
+        if self.montant_marge > 0:
+            self.coef_multi_hide = self.prix_vente_ttc / self.prix_achat_trans
+            self.coef_multi = self.coef_multi_hide
+        else:
+            self.coef_multi_hide = 0
+            self.coef_multi = self.coef_multi_hide
         
-        montant_marge = prix_vente_ht - prix_achat_trans
-        result['montant_marge_hide'] = montant_marge
-        result['montant_marge'] = result['montant_marge_hide']
+        # return {'value': result}
+
+    @api.onchange('prix_achat_ht', 'frais_transport', 'prix_vente_ht', 'taux_tva')
+    def prix_vente_ht_change(self):
+        result = {}
+        self.coef_tva = 1 + (self.taux_tva / 100)
+        self.prix_achat_trans = self.prix_achat_ht + self.frais_transport
+
+        self.prix_vente_ttc = self.prix_vente_ht * self.coef_tva
+        self.prix_vente_ttc = self.prix_vente_ttc
+        self.montant_marge = self.prix_vente_ht - self.prix_achat_trans
+
+        self.montant_marge_hide = self.montant_marge
+        self.montant_marge = self.montant_marge_hide
         
-        if montant_marge > 0:
-            result['taux_marge'] = (montant_marge / prix_achat_trans) * 100
-            result['taux_marque_hide'] = (montant_marge / prix_vente_ht) * 100
-            result['taux_marque'] = result['taux_marque_hide']
+        if self.montant_marge > 0:
+            self.taux_marge = self.montant_marge / self.prix_achat_trans *100
+            self.taux_marque_hide = self.montant_marge / self.prix_vente_ht * 100
+            self.taux_marque = self.taux_marque_hide
+            self.coef_multi_hide = self.prix_vente_ttc / self.prix_achat_trans
+            self.coef_multi = self.coef_multi_hide
+        else:
+            self.taux_marge = 0
+            self.coef_multi_hide = 0
+            self.coef_multi= self.coef_multi_hide
+            self.taux_marque_hide = 0
+            self.taux_marque= self.taux_marque_hide
             
-            prix_vente_ttc = prix_vente_ht * coef_tva
-            result['coef_multi_hide'] = prix_vente_ttc / prix_achat_trans
-            result['coef_multi'] = result['coef_multi_hide']
-        else:
-            result['taux_marge'] = 0
-            result['coef_multi_hide'] = 0
-            result['coef_multi'] = result['coef_multi_hide']
-            result['taux_marque_hide'] = 0
-            result['taux_marque'] = result['taux_marque_hide']
-        
-        return {'value': result}
-    
-    def tva_change(self,  prix_achat_ht,frais_transport, prix_vente_ht, taux_tva, montant_marge):
+        # return {'value': result}
+
+    @api.onchange('prix_vente_ttc', 'prix_achat_ht', 'frais_transport', 'taux_tva')
+    def prix_vente_ttc_change(self):
         result = {}
-        coef_tva = 1 + (taux_tva / 100)
-        prix_achat_trans = prix_achat_ht + frais_transport
-        prix_vente_ttc = prix_vente_ht * coef_tva
+        self.coef_tva = 1 + (self.taux_tva / 100)
+        self.prix_achat_trans = self.prix_achat_ht + self.frais_transport
+
+        self.prix_vente_ht = self.prix_vente_ttc / self.coef_tva
+        self.prix_vente_ht = self.prix_vente_ht
+        self.montant_marge = self.prix_vente_ht - self.prix_achat_trans
+        self.montant_marge_hide = self.montant_marge
+        self.montant_marge = self.montant_marge_hide
         
-        result['prix_achat_ttc_hide'] = prix_achat_trans * coef_tva
-        result['prix_achat_ttc'] = result['prix_achat_ttc_hide']
-        
-        result['prix_vente_ttc'] = prix_vente_ttc
-        
-        if montant_marge > 0:
-            result['coef_multi_hide'] = prix_vente_ttc / prix_achat_trans
-            result['coef_multi'] = result['coef_multi_hide']
+        if self.montant_marge > 0:
+            self.taux_marge = (self.montant_marge / self.prix_achat_trans) *100
+            self.taux_marque_hide = (self.montant_marge / self.prix_vente_ht) * 100
+            self.taux_marque = self.taux_marque_hide
+            self.coef_multi_hide =self. prix_vente_ttc / self.prix_achat_trans
+            self.coef_multi = self.coef_multi_hide
         else:
-            result['coef_multi_hide'] = 0
-            result['coef_multi'] = result['coef_multi_hide']
-        
-        return {'value': result}
-    
-    def prix_vente_ht_change(self,  prix_vente_ht, prix_achat_ht, frais_transport, taux_tva):
-        result = {}
-        coef_tva = 1 + (taux_tva / 100)
-        prix_achat_trans = prix_achat_ht + frais_transport
-        
-        prix_vente_ttc = prix_vente_ht * coef_tva
-        result['prix_vente_ttc'] = prix_vente_ttc
-        montant_marge = prix_vente_ht - prix_achat_trans
-        
-        result['montant_marge_hide'] = montant_marge
-        result['montant_marge'] = result['montant_marge_hide']
-        
-        if montant_marge > 0:
-            result['taux_marge'] = (montant_marge / prix_achat_trans) *100
-            result['taux_marque_hide'] = (montant_marge / prix_vente_ht) * 100
-            result['taux_marque'] = result['taux_marque_hide']
-            result['coef_multi_hide'] = prix_vente_ttc / prix_achat_trans
-            result['coef_multi'] = result['coef_multi_hide']
-        else:
-            result['taux_marge'] = 0
-            result['coef_multi_hide'] = 0
-            result['coef_multi'] = result['coef_multi_hide']
-            result['taux_marque_hide'] = 0
-            result['taux_marque'] = result['taux_marque_hide']
+            self.taux_marge = 0
+            self.coef_multi_hide= 0
+            self.coef_multi = self.coef_multi_hide
+            self.taux_marque_hide = 0
+            self.taux_marque = self.taux_marque_hide
             
-        return {'value': result}
-    
-    def prix_vente_ttc_change(self,  prix_vente_ttc, prix_achat_ht, frais_transport, taux_tva):
+        # return {'value': result}
+
+    @api.onchange('prix_achat_ht', 'frais_transport', 'frais_transport','taux_marge', 'taux_tva')
+    def taux_marge_change(self):
         result = {}
-        coef_tva = 1 + (taux_tva / 100)
-        prix_achat_trans = prix_achat_ht + frais_transport
+        self.coef_tva = 1 + (self.taux_tva / 100)
+        self.coef_marge = 1 + (self.taux_marge / 100)
+        self.prix_achat_trans = self.prix_achat_ht + self.frais_transport
+
+        self.prix_vente_ht = self.prix_achat_trans * self.coef_marge
+        self.prix_vente_ht = self.prix_vente_ht
+        self.prix_vente_ttc = self.prix_vente_ht * self.coef_tva
+        self.prix_vente_ttc = self.prix_vente_ttc
+
+        self.montant_marge = self.prix_vente_ht - self.prix_achat_trans
+        self.montant_marge_hide= self.montant_marge
+        self.montant_marge= self.montant_marge_hide
         
-        prix_vente_ht = prix_vente_ttc / coef_tva
-        result['prix_vente_ht'] = prix_vente_ht
-        montant_marge = prix_vente_ht - prix_achat_trans
-        result['montant_marge_hide'] = montant_marge
-        result['montant_marge'] = result['montant_marge_hide']
-        
-        if montant_marge > 0:
-            result['taux_marge'] = (montant_marge / prix_achat_trans) *100
-            result['taux_marque_hide'] = (montant_marge / prix_vente_ht) * 100
-            result['taux_marque'] = result['taux_marque_hide']
-            result['coef_multi_hide'] = prix_vente_ttc / prix_achat_trans
-            result['coef_multi'] = result['coef_multi_hide']
+        if self.montant_marge > 0:
+            self.coef_multi_hide = self.prix_vente_ttc / self.prix_achat_trans
+            self.coef_multi = self.coef_multi_hide
+            self.taux_marque_hide = (self.montant_marge / self.prix_vente_ht) * 100
+            self.taux_marque = self.taux_marque_hide
         else:
-            result['taux_marge'] = 0
-            result['coef_multi_hide'] = 0
-            result['coef_multi'] = result['coef_multi_hide']
-            result['taux_marque_hide'] = 0
-            result['taux_marque'] = result['taux_marque_hide']
-            
-        return {'value': result}
-    
-    def taux_marge_change(self,  prix_achat_ht, frais_transport, taux_marge, taux_tva):
-        result = {}
-        coef_tva = 1 + (taux_tva / 100)
-        coef_marge = 1 + (taux_marge / 100)
-        prix_achat_trans = prix_achat_ht + frais_transport
+            self.coef_multi_hide = 0
+            self.coef_multi = self.coef_multi_hide
+            self.taux_marque_hide = 0
+            self.taux_marque = self.taux_marque_hide
         
-        prix_vente_ht = prix_achat_trans * coef_marge
-        result['prix_vente_ht'] = prix_vente_ht
-        prix_vente_ttc = prix_vente_ht * coef_tva
-        result['prix_vente_ttc'] = prix_vente_ttc
-        
-        montant_marge = prix_vente_ht - prix_achat_trans
-        result['montant_marge_hide'] = montant_marge 
-        result['montant_marge'] = result['montant_marge_hide']
-        
-        if montant_marge > 0:
-            result['coef_multi_hide'] = prix_vente_ttc / prix_achat_trans
-            result['coef_multi'] = result['coef_multi_hide']
-            result['taux_marque_hide'] = (montant_marge / prix_vente_ht) * 100
-            result['taux_marque'] = result['taux_marque_hide']
-        else:
-            result['coef_multi_hide'] = 0
-            result['coef_multi'] = result['coef_multi_hide']
-            result['taux_marque_hide'] = 0
-            result['taux_marque'] = result['taux_marque_hide']
-        
-        return {'value': result}
+        # return {'value': result}
     
 #class product_supplierinfo(osv.osv):
 #   _name = "product.supplierinfo"

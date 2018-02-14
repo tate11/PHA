@@ -4,31 +4,31 @@
         <record id="view_product_template_calculatrice_form" model="ir.ui.view">
             <field name="name">view.product.template.calculatrice.form</field>
             <field name="model">product.product</field>
-            <field name="inherit_id" ref="product.product_template_only_form_view"/>
+            <field name="inherit_id" ref="product.product_normal_form_view"/>
             <field name="arch" type="xml">
-                <xpath expr="//page[@name='sales']" position="after">
+                <xpath expr="//page[@name='general_information']" position="after">
                     <page name="Calculette" string="Calculette">
                         <field name="prix_achat_ttc_hide"  attrs="{'invisible':True}"/>
                         <field name="taux_marque_hide" attrs="{'invisible':True}"/>
                         <field name="montant_marge_hide" attrs="{'invisible':True}"/>
                         <field name="coef_multi_hide" attrs="{'invisible':True}"/>
                         <group col="4">
-                            <field name="prix_achat_ht" on_change="prix_achat_ht_change(prix_achat_ht, frais_transport, prix_vente_ht, taux_tva, context)"/>
-                            <field name="prix_vente_ht" on_change="prix_vente_ht_change(prix_vente_ht, prix_achat_ht,frais_transport, taux_tva, context)"/>
+                            <field name="prix_achat_ht" />
+                            <field name="prix_vente_ht" />
                         </group>
                         <group col="2">
-                            <field name="frais_transport" on_change="prix_achat_ht_change(prix_achat_ht, frais_transport, prix_vente_ht, taux_tva, context)"/>
+                            <field name="frais_transport" />
                         </group>
                         <group col="4">
                             <field name="prix_achat_ttc" readonly="1"/>
-                            <field name="prix_vente_ttc" on_change="prix_vente_ttc_change(prix_vente_ttc, prix_achat_ht,frais_transport, taux_tva, context)"/>
+                            <field name="prix_vente_ttc" />
                         </group>
                         <group col="4">
                             <field name="montant_marge" readonly="1"/>
-                            <field name="taux_tva" on_change="tva_change(prix_achat_ht,frais_transport, prix_vente_ht, taux_tva, montant_marge, context)"/>
+                            <field name="taux_tva" />
                         </group>
                         <group col="2">
-                            <field name="taux_marge" on_change="taux_marge_change(prix_achat_ht, frais_transport,taux_marge, taux_tva, context)"/>
+                            <field name="taux_marge" />
                         </group>
                         <group col="4">
                             <field name="taux_marque" readonly="1"/>
