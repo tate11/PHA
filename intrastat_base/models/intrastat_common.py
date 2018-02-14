@@ -31,7 +31,7 @@ class IntrastatCommon(models.AbstractModel):
         """Check wether all requirements are met for generating lines."""
         for this in self:
             if not this.company_id:
-                raise UserError(_("Company not yet set on intrastat report."))
+                raise UserError(_("Company not yet set on intrastat reports."))
             company = this.company_id
             if not company.country_id:
                 raise UserError(

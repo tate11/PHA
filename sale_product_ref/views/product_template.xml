@@ -1,8 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--
-  © 2010-2016 Akretion (Alexis de Lattre <alexis.delattre@akretion.com>)
-  License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
--->
 
 <odoo>
 
@@ -13,13 +9,31 @@
     <field name="inherit_id" ref="product.product_template_only_form_view"/>
     <field name="arch" type="xml">
              <xpath expr="//page[@name='sales']" position="inside">
-                 <field name="product_ref_list" context="{'default_price': list_price}">
+                 <field name="product_ref_list"
+                        context="{'default_price': list_price}"
+                         widget="one2many"
+                 >
                      <tree editable="bottom">
-                         <field name="ref"></field>
-                         <field name="label"></field>
-                         <field name="price" ></field>
+                         <field name="sequence" widget="handle"/>
+                         <field name="ref" string="Référence"></field>
+                         <field name="label" string="Libellé"></field>
+                         <field name="price" string = "Prix"></field>
                      </tree>
                  </field>
+            </xpath>
+        <xpath expr="//page[@name='purchase']/group[@name='vendors']/field[@name='seller_ids']" position="replace">
+
+            <field name="seller_ids" context="{'default_product_tmpl_id':context.get('product_tmpl_id',active_id), 'product_template_invisible_variant': True}" nolabel="1" modifiers="{}">
+                <tree>
+                    <field name="name"/>
+                                        <field name="product_code"/>
+
+                    <field name="min_qty"/>
+                    <field name="price"/>
+                    <field name="date_start"/>
+                    <field name="date_end"/>
+                </tree>
+            </field>
             </xpath>
     </field>
 </record>
