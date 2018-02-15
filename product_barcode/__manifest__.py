@@ -20,7 +20,7 @@
 ###################################################################################
 
 {
-    'name': 'Product Barcode Generator',
+    'name': 'Product Barccode Generator',
     'version': '11.0.1.0.0',
     'summary': 'Generates EAN13 Standard Barcode for Product.',
     'category': 'Inventory',
