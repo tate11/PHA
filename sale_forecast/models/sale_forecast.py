@@ -22,7 +22,7 @@ class sale_forecast(models.Model):
     period = fields.Selection([('week','Week'),('month','Month'),('quarter','Quarter'),('year','Year')],'Period', required=True, copy=False, default='week')
     period_count= fields.Integer('No. of Periods', required=True)
     start_date = fields.Date(string='Start Date',required=True, default=datetime.today())
-    # product_ids = fields.Char(string="Product")
+
     product_ids = fields.One2many('product.product','forcast_id',string="Product")
     forecast_product_ids = fields.One2many('forecast.product', 'forecast_id', string='Forecast Products', default=False)
     past_record_ids = fields.One2many('forecast.product', 'forecast_id', string='Past Forecast Records', default=False)
@@ -310,7 +310,7 @@ class sale_forecast(models.Model):
                     'incoming_qty': qty_list['incoming_qty'],
                     'outgoing_qty': qty_list['outgoing_qty'],
                     'rest_period_qty': available_qty,
-                    'action_required': action,
+                    # 'action_required': action,
                     'avg_qty':avg_qty,
                     'avg_sale_qty':round(avg_sale_qty or 0.0),
 
@@ -351,7 +351,7 @@ class sale_forecast(models.Model):
         if self.create_action:
             if self.state != 'confirm':
                 raise Warning(_('Forecast State should be Confirmed'))
-            # procurement_order_obj = self.env['procurement.order']
+            procurement_order_obj = self.env['procurement.rule']
             supplier_obj = self.env['product.supplierinfo']
             res_company_obj = self.env['res.company']
             forecast_product_obj = self.env['forecast.product']
@@ -379,7 +379,7 @@ class sale_forecast(models.Model):
                                 picking_type_id = self.env['stock.warehouse'].search([('id','=',self.warehouse_id.id)]).int_type_id
                                 location_id = self.env['stock.picking.type'].search([('id','=',picking_type_id.id)]).default_location_dest_id
 
-                            # routes = line_route_ids and [(4, line_route_ids.id)] or []
+                            routes = line_route_ids  or []
                             date_planned = datetime.strptime(line.period_start_date,DEFAULT_SERVER_DATE_FORMAT) - relativedelta(days=company_rec.security_lead)
                             procurement_date_planned = date_planned.strftime(DEFAULT_SERVER_DATE_FORMAT)
 
@@ -387,7 +387,7 @@ class sale_forecast(models.Model):
                                 # 'product_uos_qty':
                                 'product_uom': line_prod_temp_id.uom_id.id,
                                 'warehouse_id': self.warehouse_id.id,
-                                'location_id': location_id.id,
+                                # 'location_id': location_id.id,
                                 'route_ids': routes,
                                 'product_qty': line.action_qty,
                                 # 'product_uos': line_prod_temp_id.uos_id,
@@ -396,9 +396,16 @@ class sale_forecast(models.Model):
                                 'date_planned': procurement_date_planned,
                                 'company_id': company_id.id,
                                 'forecast_ref_procurement': self.id,
+
+
                             }
+                            print("routes",routes.ids)
+                            print("vals",vals)
                             procurement_id = procurement_order_obj.create(vals).id
+
                             procurement_order_rec_state = procurement_order_obj.search([('id','=',procurement_id)]).state
+
+
                             if line.action_required == 'buy':
                                 if procurement_order_rec_state == 'exception':
                                     document_number = 'Exception'
@@ -414,6 +421,8 @@ class sale_forecast(models.Model):
                                     document_number = self.env['mrp.production'].search([('id','=',mrp_production_rec.id)]).name
                             forecast_product_obj.browse(line.id).write({'document_number': document_number, 'procurement_id': procurement_id})
                 self.state ='done'
+
+
 
 
 class product_product(models.Model):
@@ -438,10 +447,6 @@ class product_product(models.Model):
                         domain.append(('date_expected', '<=', to_date))
                     return domain
         return super(product_product,self)._get_domain_dates()
-
-
-
-
 
 class forecast_period(models.Model):
 
@@ -495,21 +500,21 @@ class purchase_order(models.Model):
     forecast_ref_purchase = fields.Many2one('sale.forecast', string='Forecast Ref.')
 # , domain=[('document','<>','view')]
 
-class procurement_order(models.Model):
+class ProcurementGroup(models.Model):
 
     _inherit = "procurement.group"
 
     forecast_ref_procurement = fields.Many2one('sale.forecast', string='Forecast ref')
 
-    @api.v7
+    @api.model
     def create_procurement_purchase_order(self,  procurement, po_vals, line_vals, context=None):
         if procurement.forecast_ref_procurement:
             po_vals.update({'forecast_ref_purchase': procurement.forecast_ref_procurement.id})
-        return super(procurement_order, self).create_procurement_purchase_order( procurement, po_vals, line_vals, context)
+        return super(purchase_order, self).create_procurement_purchase_order( procurement, po_vals, line_vals, context)
 
     @api.v7
     def _prepare_mo_vals(self,  procurement, context=None):
-        vals = super(procurement_order, self)._prepare_mo_vals( procurement, context)
+        vals = super(purchase_order, self)._prepare_mo_vals( procurement, context)
         if procurement.forecast_ref_procurement:
             vals.update({'forecast_ref_mrp' : procurement.forecast_ref_procurement.id})
         return vals
