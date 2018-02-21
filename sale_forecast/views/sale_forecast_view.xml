@@ -39,7 +39,7 @@
                             <field name="required_process" string="Required Process"
                                    on_change="onchange_required_process(required_process)"
                                    attrs="{'invisible': [('filter_visible','=',False)],'readonly':[('state','in',['done'])]}"/>
-                            <field name="create_action" attrs="{'readonly': [('state','in',['done'])]}"/>
+                            <field name="create_action" attrs="{'readonly': [('state','in',['done'])]}" invisible="1"/>
 
                             <field name="forecast_filter_id" domain="[('forecast_id', '=', active_id)]"
                                    attrs="{'invisible': [('filter_visible','=',False)],'readonly':[('state','in',['done'])]}"
@@ -137,8 +137,8 @@
                                         <field name="incoming_qty" readonly='1'/>
                                         <field name="outgoing_qty" readonly='1'/>
                                         <field name="action_qty" readonly='1'/>
-                                        <field name="action_required"/>
-                                        <field name="document_number" readonly='1'/>
+                                        <field name="action_required" invisible="1"/>
+                                        <field name="document_number" readonly='1' invisible="1"/>
                                         <field name="procurement_id" invisible='1'/>
 
                                     </tree>
