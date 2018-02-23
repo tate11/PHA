@@ -17,7 +17,7 @@ Provides ability to forecast the quantity for the products and based upon the ca
 contribution by : purvesh.parmar@bistasolutions.com
 
     """,
-    'author': 'Bistasolutions',
+    'author': 'Agilorg',
     "website": "http://www.bistasolutions.com",
     "license": "AGPL-3",
     'depends': ['sale', 'stock','crm','procurement_jit','purchase','mrp','purchase','purchase_mrp'],
