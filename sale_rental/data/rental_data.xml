@@ -15,13 +15,13 @@
     <field name="product_selectable" eval="False"/>
 </record>
 
-<!--<record id="route_warehouse0_sell_rented_product" model="stock.location.route">-->
-    <!--<field name="name">Sell Rented Product</field>-->
-    <!--&lt;!&ndash;<field name="sequence">100</field>&ndash;&gt;-->
-<!--</record>-->
+<record id="route_warehouse0_sell_rented_product" model="stock.location.route">
+    <field name="name">Sell Rented Product</field>
+    <field name="sequence">100</field>
+</record>
 
-<!--<record id="stock.warehouse0" model="stock.warehouse">-->
-    <!--<field name="rental_allowed" eval="True"/>-->
-<!--</record>-->
+<record id="stock.warehouse0" model="stock.warehouse">
+    <field name="rental_allowed" eval="True"/>
+</record>
 
 </odoo>

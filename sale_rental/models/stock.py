@@ -144,7 +144,7 @@ class StockWarehouse(models.Model):
                         'sell_rented_product_route_id': sell_rented_route.id,
                         })
                     for obj, rules_list in\
-                            self._get_rental_push_pull_rules().iteritems():
+                            self._get_rental_push_pull_rules().items():
                         for rule in rules_list:
                             self.env[obj].create(rule)
             else:
