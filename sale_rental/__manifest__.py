@@ -10,7 +10,7 @@
     'category': 'Sales Management',
     'license': 'AGPL-3',
     'summary': 'Manage Rental of Products',
-    'author': 'Akretion, Sodexis, Odoo Community Association (OCA)',
+    'author': 'agilorg',
     'website': 'http://www.akretion.com',
     'depends': ['sale_start_end_dates', 'sale_stock', 'sales_team'],
     'data': [
