@@ -29,11 +29,11 @@ class SaleRental(models.Model):
             self.end_date,
             self._fields['state'].convert_to_export(self.state, self))
 
-    @api.one
+    # @api.one
     @api.depends(
         'start_order_line_id.order_id.state',
         'start_order_line_id.move_ids.state',
-        # 'start_order_line_id.move_dest_id.state',
+        # 'start_order_line_id.procurement_ids.move_ids.move_dest_id.state',
         'sell_order_line_ids.move_ids.state',
         )
     def _compute_procurement_and_move(self):
