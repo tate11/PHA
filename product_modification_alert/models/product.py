@@ -47,15 +47,15 @@ class ProductTemplate(models.Model):
         'Sale Description', translate=True,
         help="A description of the Product that you want to communicate to your customers. "
              "This description will be copied to every Sales Order, Delivery Order and Customer Invoice/Credit Note", track_visibility = 'onchange')
-    type = fields.Selection([
-        ('consu', _('Consumable')),
-        ('service', _('Service'))], string='Product Type', default='consu', required=True,
-        help='A stockable product is a product for which you manage stock. The "Inventory" app has to be installed.\n'
-             'A consumable product, on the other hand, is a product for which stock is not managed.\n'
-             'A service is a non-material product you provide.\n'
-             'A digital content is a non-material product you sell online. The files attached to the products are the one that are sold on '
-             'the e-commerce such as e-books, music, pictures,... The "Digital Product" module has to be installed.', track_visibility = 'onchange')
-    rental = fields.Boolean('Can be Rent')
+    # type = fields.Selection([
+    #     ('consu', _('Consumable')),
+    #     ('service', _('Service'))], string='Product Type', default='consu', required=True,
+    #     help='A stockable product is a product for which you manage stock. The "Inventory" app has to be installed.\n'
+    #          'A consumable product, on the other hand, is a product for which stock is not managed.\n'
+    #          'A service is a non-material product you provide.\n'
+    #          'A digital content is a non-material product you sell online. The files attached to the products are the one that are sold on '
+    #          'the e-commerce such as e-books, music, pictures,... The "Digital Product" module has to be installed.', track_visibility = 'onchange')
+    # rental = fields.Boolean('Can be Rent')
     categ_id = fields.Many2one(
         'product.category', 'Internal Category',
         change_default=True, default=_get_default_category_id,
