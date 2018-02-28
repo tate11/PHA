@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+<data>
+        <record id="product_template_only_form_view_inherited" model="ir.ui.view">
+            <field name="name">product.template.product.form.inherited</field>
+            <field name="model">product.template</field>
+            <field name="inherit_id" ref="product.product_template_only_form_view"/>
+            <field name="arch" type="xml">
+
+  <notebook>
+    <page string="Caractéristiques">
+        <sheet>
+            <group	name="group_top">
+        <group name="group_left">
+              <field name="descrition" />
+              <field name="material" />
+        </group>
+
+               <group 	name="group_right">
+                   <field name="dimension"/>
+                <field name="diameter"/>
+               </group>
+</group>
+        </sheet>
+    </page>
+ </notebook>
+           </field>
+        </record>
+
+
+    <record id="product_template_search_view" model="ir.ui.view">
+        <field name="name">product.template.search</field>
+        <field name="model">product.template</field>
+        <field name="arch" type="xml">
+            <search string="Product">
+                <field name="name" string="Product" filter_domain="['|','|',('default_code','ilike',self),('name','ilike',self),('barcode','ilike',self)]"/>
+
+                <separator/>
+                <filter string="Material PLASTIC" name="material" domain="[('material','=','plastic')]"/>
+            </search>
+
+		</field>
+  </record>
+
+
+</data>
+</odoo>

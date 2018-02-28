@@ -29,7 +29,7 @@ class SaleRental(models.Model):
             self.end_date,
             self._fields['state'].convert_to_export(self.state, self))
 
-    # @api.one
+    @api.one
     @api.depends(
         'start_order_line_id.order_id.state',
         'start_order_line_id.move_ids.state',
