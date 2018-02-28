@@ -8,7 +8,7 @@ from odoo import models, fields
 
 class ResCompany(models.Model):
     """Replace the company's fields for SIRET/RC with the partner's"""
-    _inherit = 'res.company'
+    _inherit = ['res.company','mail.thread', 'mail.activity.mixin', 'portal.mixin']
 
     # siret field is defined in l10n_fr module
     siret = fields.Char(
