@@ -2,7 +2,7 @@
 
 
 {
-    'name': 'pha Product features',
+    'name': 'PHA Product features',
     'version': '11.0.1.0.0',
     'category': 'Product Management',
 
