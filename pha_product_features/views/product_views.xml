@@ -12,7 +12,7 @@
         <sheet>
             <group	name="group_top">
         <group name="group_left">
-              <field name="descrition" />
+              <field name="description" />
               <field name="material" />
         </group>
 
