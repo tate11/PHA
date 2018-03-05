@@ -33,7 +33,7 @@ class SaleRental(models.Model):
     @api.depends(
         'start_order_line_id.order_id.state',
         'start_order_line_id.move_ids.state',
-        # 'start_order_line_id.procurement_ids.move_ids.move_dest_id.state',
+        'start_order_line_id.move_ids.move_dest_ids.state',
         'sell_order_line_ids.move_ids.state',
         )
     def _compute_procurement_and_move(self):
@@ -43,24 +43,33 @@ class SaleRental(models.Model):
         sell_procurement = False
         sell_move = False
         state = False
+        print("start_order_line_id", self.start_order_line_id)
+        print("start_order_line_id.move_ids", self.start_order_line_id.move_ids)
+
         if (
                 self.start_order_line_id and
                 self.start_order_line_id.move_ids):
 
-            procurement = self.start_order_line_id.procurement_ids[0]
+            procurement = self.start_order_line_id
             if procurement.move_ids:
+
                 for move in procurement.move_ids:
-                    if move.move_dest_id:
+                    for move_dest_id in move.move_dest_ids:
                         out_move = move
-                        in_move = move.move_dest_id
+                        in_move = move_dest_id
             if (
                     self.sell_order_line_ids and
-                    self.sell_order_line_ids[0].procurement_ids):
+                    self.sell_order_line_ids[0].move_ids):
                 sell_procurement =\
-                    self.sell_order_line_ids[0].procurement_ids[0]
+                    self.sell_order_line_ids[0]
                 if sell_procurement.move_ids:
                     sell_move = sell_procurement.move_ids[0]
             state = 'ordered'
+
+
+
+
+
             if out_move and in_move:
                 if out_move.state == 'done':
                     state = 'out'
@@ -75,12 +84,21 @@ class SaleRental(models.Model):
                         state = 'sold'
             if self.start_order_line_id.order_id.state == 'cancel':
                 state = 'cancel'
-        self.procurement_id = procurement
+
+
+
+        self.procurement_id = self.start_order_line_id.move_ids[0]
         self.in_move_id = in_move
         self.out_move_id = out_move
         self.state = state
         self.sell_procurement_id = sell_procurement
         self.sell_move_id = sell_move
+
+        print("procurement",procurement)
+        print("in_move", in_move)
+        print("state", state)
+        print("sell_procurement_id", self.sell_procurement_id)
+        print("sell_move_id", self.sell_move_id)
 
     @api.one
     @api.depends(
@@ -123,7 +141,7 @@ class SaleRental(models.Model):
         'res.partner', related='start_order_line_id.order_id.partner_id',
         string='Customer', readonly=True, store=True)
     procurement_id = fields.Many2one(
-        'procurement.order', string="Procurement", readonly=True,
+        'stock.move', string="Procurement", readonly=True,
         compute='_compute_procurement_and_move', store=True)
     out_move_id = fields.Many2one(
         'stock.move', compute='_compute_procurement_and_move',
@@ -150,7 +168,7 @@ class SaleRental(models.Model):
         'sale.order.line', 'sell_rental_id',
         string='Sell Rented Product', readonly=True)
     sell_procurement_id = fields.Many2one(
-        'procurement.order', string="Sell Procurement", readonly=True,
+        'procurement.group', string="Sell Procurement", readonly=True,
         compute='_compute_procurement_and_move', store=True)
     sell_move_id = fields.Many2one(
         'stock.move', compute='_compute_procurement_and_move',

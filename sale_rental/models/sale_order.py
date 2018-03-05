@@ -24,7 +24,10 @@ class SaleOrder(models.Model):
         for order in self:
             for line in order.order_line:
                 if line.rental_type == 'new_rental':
+                    print('rental_type')
                     self.env['sale.rental'].create(line._prepare_rental())
+                    print('line._prepare_rental')
+
                 elif line.rental_type == 'rental_extension':
                     line.extension_rental_id.in_move_id.date_expected =\
                         line.end_date
@@ -42,7 +45,7 @@ class SaleOrder(models.Model):
 class SaleOrderLine(models.Model):
     _inherit = 'sale.order.line'
 
-    rental = fields.Boolean(string='Rental')
+    rental = fields.Boolean(string='Rental',default='True')
     can_sell_rental = fields.Boolean(string='Can Sell from Rental')
     rental_type = fields.Selection([
         ('new_rental', 'New Rental'),
