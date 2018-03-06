@@ -12,7 +12,7 @@
         <sheet>
             <group	name="group_top">
         <group name="group_left">
-              <field name="descrition" />
+              <field name="description" />
               <field name="material" />
         </group>
 
@@ -34,7 +34,6 @@
         <field name="arch" type="xml">
             <search string="Product">
                 <field name="name" string="Product" filter_domain="['|','|',('default_code','ilike',self),('name','ilike',self),('barcode','ilike',self)]"/>
-
                 <separator/>
                 <filter string="Material PLASTIC" name="material" domain="[('material','=','plastic')]"/>
             </search>

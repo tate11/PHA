@@ -2,13 +2,16 @@
 
 
 {
-    'name': 'Product features',
+    'name': 'PHA Product features',
     'version': '11.0.1.0.0',
     'category': 'Product Management',
 
-    'summary': 'ADD Product features ',
-    'author': 'AgilOrg',
-    'website': 'http://www.agilorg.com',
+    'sequence': 1,
+    'author': "Cadrinsitu",
+    'website': "http://www.cadrinsitu.com",
+
+    'category': 'Website',
+    'version': '0.1',
     'depends': ['product'],
     'data': [
 

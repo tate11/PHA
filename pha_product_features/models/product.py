@@ -19,7 +19,7 @@ class ProductTemplate(models.Model):
     _inherit = ['product.template']
 
 
-    descrition = fields.Text(string='Description')
+    description = fields.Text(string='Description')
     material = fields.Char(string='Matière')
     dimension = fields.Char(string='Dimension')
     diameter = fields.Char(string='Diamètre')
