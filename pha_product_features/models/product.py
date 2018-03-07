@@ -6,20 +6,28 @@ import psycopg2
 from odoo.addons import decimal_precision as dp
 
 from odoo import api, fields, models, tools, _
-from odoo.exceptions import ValidationError, RedirectWarning, except_orm
-from odoo.tools import pycompat
 
+
+class ProductMateriales(models.Model):
+    _name='product.materiales'
+
+    name =fields.Char(string='Matière')
 
 class ProductTemplate(models.Model):
-    """ Product Template inheritance to add an optional email.template to a
-    product.template. When validating an invoice, an email will be send to the
-    customer based on this template. The customer will receive an email for each
-    product linked to an email template. """
+    """ Product Template inheritance to add an optional features to a
+    product.template. . """
 
     _inherit = ['product.template']
-
-
-    description = fields.Text(string='Description')
-    material = fields.Char(string='Matière')
+    description =fields.Text(string='Description')
+    # material =fields.Many2one('product.materiales',string='Matière')
     dimension = fields.Char(string='Dimension')
     diameter = fields.Char(string='Diamètre')
+
+    material_id = fields.Many2one('product.materiales',string='Matière')
+
+    # @api.multi
+    # def _get_name_material(self):
+    #     for obj in self:
+    #         obj.name = '%s ' % (obj.material_id.name)
+    #
+    # material = fields.Char(string='Matière', compute='_get_name_material')

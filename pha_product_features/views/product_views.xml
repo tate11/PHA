@@ -13,14 +13,14 @@
             <group	name="group_top">
         <group name="group_left">
               <field name="description" />
-              <field name="material" />
+              <field name="material_id" />
         </group>
 
                <group 	name="group_right">
                    <field name="dimension"/>
                 <field name="diameter"/>
                </group>
-</group>
+            </group>
         </sheet>
     </page>
  </notebook>
@@ -28,18 +28,18 @@
         </record>
 
 
-    <record id="product_template_search_view" model="ir.ui.view">
-        <field name="name">product.template.search</field>
-        <field name="model">product.template</field>
-        <field name="arch" type="xml">
-            <search string="Product">
-                <field name="name" string="Product" filter_domain="['|','|',('default_code','ilike',self),('name','ilike',self),('barcode','ilike',self)]"/>
-                <separator/>
-                <filter string="Material PLASTIC" name="material" domain="[('material','=','plastic')]"/>
-            </search>
+    <!--<record id="product_template_search_view" model="ir.ui.view">-->
+        <!--<field name="name">product.template.search</field>-->
+        <!--<field name="model">product.template</field>-->
+        <!--<field name="arch" type="xml">-->
+            <!--<search string="Product">-->
+                <!--<field name="name" string="Product" filter_domain="['|','|',('default_code','ilike',self),('name','ilike',self),('barcode','ilike',self)]"/>-->
+                <!--<separator/>-->
+                <!--<filter string="Material PLASTIC" name="material" domain="[('material','=','plastic')]"/>-->
+            <!--</search>-->
 
-		</field>
-  </record>
+		<!--</field>-->
+  <!--</record>-->
 
 
 </data>
