@@ -14,6 +14,5 @@ class product_template(models.Model):
 
     @api.depends('travee','colonne','etagere')
     def _compute_location(self):
-
-
-        self.location = str(self.travee)+"/"+str(self.colonne)+"/"+str(self.etagere)
+        for obj in self:
+            obj.location = str(obj.travee)+"/"+str(obj.colonne)+"/"+str(obj.etagere)
