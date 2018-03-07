@@ -13,6 +13,7 @@ class ProductMateriales(models.Model):
 
     name =fields.Char(string='Matière')
 
+
 class ProductTemplate(models.Model):
     """ Product Template inheritance to add an optional features to a
     product.template. . """
