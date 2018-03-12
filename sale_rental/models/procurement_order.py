@@ -6,7 +6,7 @@
 from odoo import models, api
 
 
-class ProcurementRule(models.Model):
+class ProcurementGroup(models.Model):
     _inherit = 'procurement.rule'
 
     @api.model
@@ -14,4 +14,4 @@ class ProcurementRule(models.Model):
         if 'rental_product_qty' in vals:
             vals['product_qty'] = vals['rental_product_qty']
             vals.pop('rental_product_qty')
-        return super(ProcurementRule, self).create(vals)
+        return super(ProcurementGroup, self).create(vals)
