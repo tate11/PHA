@@ -35,6 +35,7 @@ class sale_forecast(models.Model):
     create_action = fields.Boolean(string="Do you want to create Supply for process quantity?", default=False)
     required_process = fields.Selection([('buy', 'Buy'), ('manufacture', 'Manufacture')], 'Required Process',
                                         copy=False)
+
     record_generated = fields.Boolean('Record', defalut=False)
     state = fields.Selection([('open', 'Open'), ('confirm', 'Confirm'), ('done', 'Done')], copy=False, default='open')
     sales_person_id = fields.Many2one('res.users', string='Salesperson')
@@ -46,6 +47,7 @@ class sale_forecast(models.Model):
     @api.one
     def set_confirm(self):
         return self.write({'state': 'confirm'})
+
 
     @api.one
     def set_open(self):
@@ -124,9 +126,12 @@ class sale_forecast(models.Model):
         for forecast_filter_id in self:
             if forecast_filter_id in vals:
                 vals['forecast_filter_id'] = False
+                print('forecast_filter_id')
+
 
         for period_count in self:
             if period_count in vals:
+
 
                 if vals['period_count'] <= 0:
                     raise Warning(_('Number of Periods should be grater than zero'))

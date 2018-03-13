@@ -7,7 +7,7 @@ from odoo import models, api
 
 
 class ProcurementGroup(models.Model):
-    _inherit = 'procurement.group'
+    _inherit = 'procurement.rule'
 
     @api.model
     def create(self, vals):

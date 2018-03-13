@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+<data>
+        <record id="product_supplierinfo_tree_view_inherited" model="ir.ui.view">
+            <field name="name">product.supplierinfo.tree.inherited</field>
+            <field name="model">product.supplierinfo</field>
+            <field name="inherit_id" ref="product.product_supplierinfo_tree_view"/>
+            <field name="arch" type="xml">
+                <field name="name" position="after">
+                     <field name="product_code"/>
+
+                </field>
+
+
+           </field>
+        </record>
+
+
+
+
+</data>
+</odoo>

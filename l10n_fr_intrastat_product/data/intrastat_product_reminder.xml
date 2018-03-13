@@ -8,7 +8,8 @@
 
 <odoo>
 
-<data noupdate="1"> <!-- noupdate = 1 for the 'active' field -->
+<data noupdate="1">
+    <!-- noupdate = 1 for the 'active' field -->
 <!--<record id="l10n_fr_intrastat_product_cron" model="ir.cron">-->
     <!--<field name="name">Intrastat Product Reminder</field>-->
     <!--<field name="active" eval="False"/>-->
@@ -25,7 +26,7 @@
 </data>
 <data>
 
-<record id="l10n_fr_intrastat_product_reminder_email_template" model="email.template">
+<record id="l10n_fr_intrastat_product_reminder_email_template" model="mail.template">
     <field name="name">Intrastat Product Reminder</field>
     <field name="model_id" ref="l10n_fr_intrastat_product.model_l10n_fr_report_intrastat_product"/>
     <field name="auto_delete" eval="False"/>

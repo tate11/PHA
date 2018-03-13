@@ -33,7 +33,7 @@ class SaleRental(models.Model):
     @api.depends(
         'start_order_line_id.order_id.state',
         'start_order_line_id.move_ids.state',
-        'start_order_line_id.move_ids.move_dest_ids.state',
+        # 'start_order_line_id.procurement_ids.move_ids.move_dest_id.state',
         'sell_order_line_ids.move_ids.state',
         )
     def _compute_procurement_and_move(self):
@@ -43,33 +43,24 @@ class SaleRental(models.Model):
         sell_procurement = False
         sell_move = False
         state = False
-        print("start_order_line_id", self.start_order_line_id)
-        print("start_order_line_id.move_ids", self.start_order_line_id.move_ids)
-
         if (
                 self.start_order_line_id and
-                self.start_order_line_id.move_ids):
+                self.start_order_line_id.procurement_ids):
 
-            procurement = self.start_order_line_id
+            procurement = self.start_order_line_id.procurement_ids[0]
             if procurement.move_ids:
-
                 for move in procurement.move_ids:
-                    for move_dest_id in move.move_dest_ids:
+                    if move.move_dest_id:
                         out_move = move
-                        in_move = move_dest_id
+                        in_move = move.move_dest_id
             if (
                     self.sell_order_line_ids and
-                    self.sell_order_line_ids[0].move_ids):
+                    self.sell_order_line_ids[0].procurement_ids):
                 sell_procurement =\
-                    self.sell_order_line_ids[0]
+                    self.sell_order_line_ids[0].procurement_ids[0]
                 if sell_procurement.move_ids:
                     sell_move = sell_procurement.move_ids[0]
             state = 'ordered'
-
-
-
-
-
             if out_move and in_move:
                 if out_move.state == 'done':
                     state = 'out'
@@ -84,21 +75,16 @@ class SaleRental(models.Model):
                         state = 'sold'
             if self.start_order_line_id.order_id.state == 'cancel':
                 state = 'cancel'
-
-
-
-        self.procurement_id = self.start_order_line_id.move_ids[0]
+        self.procurement_id = procurement
         self.in_move_id = in_move
         self.out_move_id = out_move
         self.state = state
         self.sell_procurement_id = sell_procurement
         self.sell_move_id = sell_move
+        # print('procurement_id')
+        # print('in_move_id')
+        # print('sell_procurement_id')
 
-        print("procurement",procurement)
-        print("in_move", in_move)
-        print("state", state)
-        print("sell_procurement_id", self.sell_procurement_id)
-        print("sell_move_id", self.sell_move_id)
 
     @api.one
     @api.depends(
