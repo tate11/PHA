@@ -163,7 +163,6 @@
             </field>
         </record>
 
-
         <record model="ir.actions.act_window" id="sale_forecast_action">
             <field name="name">Sale Forecast</field>
             <field name="res_model">sale.forecast</field>

@@ -398,7 +398,7 @@ class sale_forecast(models.Model):
         if self.create_action:
             if self.state != 'confirm':
                 raise Warning(_('Forecast State should be Confirmed'))
-            procurement_order_obj = self.env['procurement.rule']
+            procurement_order_obj = self.env['procurement.group']
             supplier_obj = self.env['product.supplierinfo']
             res_company_obj = self.env['res.company']
             forecast_product_obj = self.env['forecast.product']
@@ -408,7 +408,11 @@ class sale_forecast(models.Model):
                 line_prod_temp_id = line.product_id.product_tmpl_id
                 line_route_ids = self.env['product.template'].search([('id', '=', line_prod_temp_id.id)]).route_ids
                 mto_route_id = self.env['stock.location.route'].search([('name', '=', 'Make To Order')]).id
-
+                print("line_product_id",line_product_id)
+                print("line_prod_temp_id", line_prod_temp_id)
+                print("line_route_ids", line_route_ids)
+                print("mto_route_id", mto_route_id)
+#-----------------------------------------------------------------------------------
                 company_id = line.product_id.company_id
                 company_rec = res_company_obj.search([('id', '=', company_id.id)])
                 if line_route_ids:
@@ -418,11 +422,16 @@ class sale_forecast(models.Model):
                         if line_prod_temp_id.type == 'product':
                             if line.action_required == 'buy':
                                 route_id = self.env['stock.location.route'].search([('name', '=', 'Buy')]).id
+                                print("route_id", route_id)
                                 routes = route_id and [(4, route_id)] or []
+                                print("routes", routes)
                                 picking_type_id = self.env['stock.warehouse'].search(
                                     [('id', '=', self.warehouse_id.id)]).in_type_id
+                                print("picking_type_id", picking_type_id)
                                 location_id = self.env['stock.picking.type'].search(
                                     [('id', '=', picking_type_id.id)]).default_location_dest_id
+                                print("location_id", location_id)
+     ##################################### manifiacturing###########################################
                             elif line.action_required in ('manufacture', 'both'):
                                 route_id = self.env['stock.location.route'].search([('name', '=', 'Manufacture')]).id
                                 routes = route_id and [(4, route_id)] or []
@@ -452,7 +461,12 @@ class sale_forecast(models.Model):
                                 'forecast_ref_procurement': self.id,
 
                             }
-                            print("routes", routes.ids)
+                            print("product_uos_qty", product_uos_qty)
+                            print("product_uom", product_uom)
+                            print("warehouse_id", warehouse_id)
+                            print("location_id", location_id)
+                            print("product_uos", product_uos)
+                            print("forecast_ref_procurement", forecast_ref_procurement)
                             print("vals", vals)
                             procurement_id = procurement_order_obj.create(vals).id
 
@@ -565,17 +579,17 @@ class ProcurementGroup(models.Model):
 
     forecast_ref_procurement = fields.Many2one('sale.forecast', string='Forecast ref')
 
-    @api.model
+    @api.multi
     def create_procurement_purchase_order(self, procurement, po_vals, line_vals, context=None):
-        if procurement.forecast_ref_procurement:
-            po_vals.update({'forecast_ref_purchase': procurement.forecast_ref_procurement.id})
+        # if procurement.forecast_ref_procurement:
+        #     po_vals.update({'forecast_ref_purchase': procurement.forecast_ref_procurement.id})
         return super(purchase_order, self).create_procurement_purchase_order(procurement, po_vals, line_vals, context)
 
-    @api.v7
+    @api.multi
     def _prepare_mo_vals(self, procurement, context=None):
         vals = super(purchase_order, self)._prepare_mo_vals(procurement, context)
-        if procurement.forecast_ref_procurement:
-            vals.update({'forecast_ref_mrp': procurement.forecast_ref_procurement.id})
+        # if procurement.forecast_ref_procurement:
+        #     vals.update({'forecast_ref_mrp': procurement.forecast_ref_procurement.id})
         return vals
 
 
