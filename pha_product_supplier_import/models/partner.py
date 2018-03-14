@@ -13,7 +13,7 @@ from odoo.tools import pycompat
 class ResPartner(models.Model):
     _inherit = ['res.partner']
 
-    suppliers_ids = fields.Many2many('product.supplierinfo', string='prix fournisseurs')
+    suppliers_ids = fields.One2many('product.supplierinfo', 'name', string='prix fournisseurs')
 
 
 
