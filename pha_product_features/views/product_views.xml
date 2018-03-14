@@ -28,18 +28,52 @@
         </record>
 
 
-    <!--<record id="product_template_search_view" model="ir.ui.view">-->
-        <!--<field name="name">product.template.search</field>-->
-        <!--<field name="model">product.template</field>-->
-        <!--<field name="arch" type="xml">-->
-            <!--<search string="Product">-->
-                <!--<field name="name" string="Product" filter_domain="['|','|',('default_code','ilike',self),('name','ilike',self),('barcode','ilike',self)]"/>-->
-                <!--<separator/>-->
-                <!--<filter string="Material PLASTIC" name="material" domain="[('material','=','plastic')]"/>-->
-            <!--</search>-->
 
-		<!--</field>-->
-  <!--</record>-->
+
+  <act_window context="{}" groups="" id="product_mat_action" name="Configuration Matières Produits " res_model="product.materiales" view_mode="tree,form" view_type="form"/>
+    <menuitem action="product_mat_action" id="product_materiels_menuitem" name="Matières Configuration" parent="sale.menu_sale_config" sequence="7"/>
+
+
+
+        <record id="product_mat_form" model="ir.ui.view">
+            <field name="name">product_mat_form</field>
+            <field name="model">product.materiales</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <group>
+                            <field  name="name"/>
+
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+ <record id="product_mat_tree" model="ir.ui.view">
+            <field name="name">product_mat_tree</field>
+            <field name="model">product.materiales</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <group>
+                            <field  name="name" sring="Matières "/>
+
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+
+
+
+
+
+
+
+
+
 
 
 </data>

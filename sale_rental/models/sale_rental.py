@@ -81,8 +81,9 @@ class SaleRental(models.Model):
         self.state = state
         self.sell_procurement_id = sell_procurement
         self.sell_move_id = sell_move
-
-
+        # print('procurement_id')
+        # print('in_move_id')
+        # print('sell_procurement_id')
 
 
     @api.one
