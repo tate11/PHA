@@ -18,6 +18,7 @@
                     <page string="Tarifs Fournisseurs">
                         <field name="suppliers_ids">
                             <tree>
+                                 <field name="ref"/>
                                 <field name="product_tmpl_id"/>
                                 <field name="min_qty"/>
                                 <field name="price"/>
