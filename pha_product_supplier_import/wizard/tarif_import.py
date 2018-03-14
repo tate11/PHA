@@ -23,9 +23,9 @@ class TarifLine(models.TransientModel):
         'Vendor Product Code',
         help="This vendor's product code will be used when printing a request for quotation. Keep empty to use the internal one.")
 
-    # price = fields.Float(
-    #     'Price', default=0.0,
-    #     required=True, help="The price to purchase a product")
+    price = fields.Float(
+        'Price', default=0.0,
+        required=True, help="The price to purchase a product")
 
     # date_start = fields.Date('Start Date', help="Start date for this vendor price")
     # date_end = fields.Date('End Date', help="End date for this vendor price")
@@ -81,7 +81,7 @@ class TarifImport(models.TransientModel):
 
                 tarif_item['min_qty'] = csv_line[3]
                 tarif_item['product_code'] = csv_line[2]
-                # tarif_item['price'] = csv_line[4]
+                tarif_item['price'] = float(csv_line[4].replace(",","."))
                 # tarif_item['date_start'] = csv_line[5]
                 # tarif_item['date_end'] = csv_line[6]
                 if product_tmpl_id:
@@ -137,7 +137,7 @@ class TarifImport(models.TransientModel):
                           'min_qty': tarif.min_qty,
                           'name': self.supplier_id.id,
                           'product_code': tarif.product_code,
-                          # 'price': tarif.price,
+                          'price': tarif.price,
                           # 'date_start': tarif.date_start,
                           # 'date_end': tarif.date_end,
                           }
