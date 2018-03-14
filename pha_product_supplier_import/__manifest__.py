@@ -14,9 +14,8 @@
     'version': '0.1',
     'depends': ['product'],
     'data': [
-
-        'views/product_views.xml',
         'wizard/tarif_import.xml',
+        'views/product_views.xml',
 
 
 
