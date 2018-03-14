@@ -23,6 +23,7 @@
                         <tree create="false"  editable="top">
                             <field name="product_tmpl_id"></field>
                             <field name="min_qty"></field>
+                            <field name="price"></field>
                             <field name="state"></field>
                         </tree>
                     </field>
