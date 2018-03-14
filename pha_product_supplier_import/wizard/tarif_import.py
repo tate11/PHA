@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
-from odoo import api, fields, models, _
+from odoo import api, fields, models, _, tools
 from odoo.exceptions import UserError, ValidationError
 import base64, csv
 from io import BytesIO, StringIO
-
+import datetime
 import logging
 from odoo.tools import pycompat
 
@@ -19,6 +19,13 @@ class TarifLine(models.TransientModel):
         'Minimal Quantity', default=0.0, required=True,
         help="The minimal quantity to purchase from this vendor, expressed in the vendor Product Unit of Measure if not any, in the default unit of measure of the product otherwise.")
 
+    max_qty= fields.Float(
+        'Maximal Quantity', default=0.0, required=True,)
+
+    product_name = fields.Char(
+        'Vendor Product Name',
+        help="This vendor's product name will be used when printing a request for quotation. Keep empty to use the internal one.")
+
     product_code = fields.Char(
         'Vendor Product Code',
         help="This vendor's product code will be used when printing a request for quotation. Keep empty to use the internal one.")
@@ -27,8 +34,10 @@ class TarifLine(models.TransientModel):
         'Price', default=0.0,
         required=True, help="The price to purchase a product")
 
-    # date_start = fields.Date('Start Date', help="Start date for this vendor price")
-    # date_end = fields.Date('End Date', help="End date for this vendor price")
+    date_start = fields.Date('Start Date', help="Start date for this vendor price")
+    date_end = fields.Date('End Date', help="End date for this vendor price")
+
+
 
 
 
@@ -74,16 +83,21 @@ class TarifImport(models.TransientModel):
         list = enumerate(self.reader_info)
         logging.error('reader_info ' + str(self.reader_info))
         for i, csv_line in list:
-            print ("csv_line", csv_line)
             if i > 0:
                 product_tmpl_id = self.env['product.template'].search([('default_code', '=', csv_line[0])])
                 tarif_item = {}
 
-                tarif_item['min_qty'] = csv_line[3]
+                tarif_item['product_name'] = csv_line[1]
                 tarif_item['product_code'] = csv_line[2]
-                tarif_item['price'] = float(csv_line[4].replace(",","."))
-                # tarif_item['date_start'] = csv_line[5]
-                # tarif_item['date_end'] = csv_line[6]
+                tarif_item['min_qty'] = csv_line[3]
+                tarif_item['max_qty'] = csv_line[4]
+
+                tarif_item['price'] = float(csv_line[5].replace(",","."))
+                print('str:', csv_line[6])
+                print('date:', datetime.datetime.strptime(csv_line[6],'%d/%m/%Y').date())
+                #
+                # tarif_item['date_start'] = datetime.datetime.strptime(csv_line[6],'%d/%m/%Y').date()
+                # tarif_item['date_end'] = datetime.datetime.strptime(csv_line[7],'%d/%m/%Y').date()
                 if product_tmpl_id:
                     tarif_item['state'] = 'valid'
                     tarif_item['product_tmpl_id'] = product_tmpl_id[0].id
@@ -102,7 +116,7 @@ class TarifImport(models.TransientModel):
 
         csv_data = base64.b64decode(self.data)
         csv_data = BytesIO(csv_data.decode('utf-8').encode('utf-8'))
-        csv_iterator = pycompat.csv_reader(csv_data, delimiter=";")
+        csv_iterator = pycompat.csv_reader(csv_data, delimiter=",")
 
         logging.info("csv_iterator" + str(csv_iterator))
 
@@ -135,12 +149,15 @@ class TarifImport(models.TransientModel):
 
             tarif_item = {'product_tmpl_id': tarif.product_tmpl_id.id,
                           'min_qty': tarif.min_qty,
+                          'max_qty': tarif.max_qty,
                           'name': self.supplier_id.id,
+                          'product_name': tarif.product_name,
                           'product_code': tarif.product_code,
                           'price': tarif.price,
-                          # 'date_start': tarif.date_start,
-                          # 'date_end': tarif.date_end,
+                          'date_start': tarif.date_start,
+                          'date_end': tarif.date_end,
                           }
+            print ('tarif_item:',tarif_item)
             if tarif.state == 'valid':
                 self.env['product.supplierinfo'].create(tarif_item)
                 tarif_item['state'] = 'imported'
