@@ -35,6 +35,13 @@ class TarifImport(models.TransientModel):
                          required=True,
                          default=lambda self: self._context.get('data'))
     name = fields.Char('Filename')
+    encoding = fields.Selection([('iso8859_10','Windows Excel'),
+                                  ('latin_1','Europe France'),
+                                  ('iso8859_15','Europe France - Euro'),
+                                  ('iso8859_6','Arabe'),
+                                  ('utf_8','Unicode - utf-8'),
+                                  ('utf_16','Unicode - utf-16'),
+                                  ],'Encodage Caractères ',default='utf_8')
     delimeter = fields.Selection([(',', 'Virgule ","'),
                                   (';', 'Point virgule ";"')]
                                  ,'Delimeter',
@@ -60,12 +67,11 @@ class TarifImport(models.TransientModel):
     def _get_tarif_from_csv(self):
         tarif_items = []
         list = enumerate(self.reader_info)
-        logging.error('reader_info ' + str(self.reader_info))
         for i, csv_line in list:
             if i > 0:
                 product_tmpl_id = self.env['product.template'].search([('default_code', '=', csv_line[0])])
                 tarif_item = {}
-                print ('csv_line:',csv_line)
+
                 tarif_item['product_name'] = csv_line[1]
                 tarif_item['product_code'] = csv_line[2]
                 tarif_item['min_qty'] = csv_line[3]
@@ -92,10 +98,8 @@ class TarifImport(models.TransientModel):
             raise exceptions.Warning(_("You need to select a file!"))
 
         csv_data = base64.b64decode(self.data)
-        csv_data = BytesIO(csv_data.decode('utf-8').encode('utf-8'))
+        csv_data = BytesIO(csv_data.decode(self.encoding).encode('utf-8'))
         csv_iterator = pycompat.csv_reader(csv_data, quotechar="'", delimiter=self.delimeter)
-
-        logging.info("csv_iterator" + str(csv_iterator))
 
         try:
             self.reader_info = []
