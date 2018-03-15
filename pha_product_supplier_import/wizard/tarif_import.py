@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
-from odoo import api, fields, models, _
+from odoo import api, fields, models, _, tools
 from odoo.exceptions import UserError, ValidationError
 import base64, csv
 from io import BytesIO, StringIO
-
+import datetime
 import logging
 from odoo.tools import pycompat
 
@@ -14,31 +14,18 @@ class TarifLine(models.TransientModel):
     product_tmpl_id = fields.Many2one(
         'product.template', 'Product Template',
         index=True, ondelete='cascade', oldname='product_id')
-
-    min_qty = fields.Float(
-        'Minimal Quantity', default=0.0, required=True,
-        help="The minimal quantity to purchase from this vendor, expressed in the vendor Product Unit of Measure if not any, in the default unit of measure of the product otherwise.")
-
-    product_code = fields.Char(
-        'Vendor Product Code',
-        help="This vendor's product code will be used when printing a request for quotation. Keep empty to use the internal one.")
-
-    price = fields.Float(
-        'Price', default=0.0,
-        required=True, help="The price to purchase a product")
-
-    # date_start = fields.Date('Start Date', help="Start date for this vendor price")
-    # date_end = fields.Date('End Date', help="End date for this vendor price")
-
-
-
+    min_qty = fields.Float('Minimal Quantity', default=0.0, required=True)
+    max_qty = fields.Float('Maximal Quantity', default=0.0, required=True)
+    product_name = fields.Char('Vendor Product Name')
+    product_code = fields.Char('Vendor Product Code')
+    price = fields.Float('Price', default=0.0,required=True)
+    date_start = fields.Date('Start Date')
+    date_end = fields.Date('End Date')
     state = fields.Selection(selection=[('valid', 'valid'),
                                         ('not_valid', 'not valid'),
                                         ('imported', 'imported'),
                                         ('not_imported', 'not imported'),
-                                        ],
-                             default='valid'
-                             )
+                                        ],default='valid')
 
 
 class TarifImport(models.TransientModel):
@@ -49,7 +36,7 @@ class TarifImport(models.TransientModel):
                          default=lambda self: self._context.get('data'))
     name = fields.Char('Filename')
     delimeter = fields.Char('Delimeter',
-                            default=';',
+                            default=',',
                             help='Default delimeter is ","')
 
     lineterminator = fields.Char('Line terminator',
@@ -67,23 +54,26 @@ class TarifImport(models.TransientModel):
     tarif_ids = fields.Many2many('tarif.line',
                                  default=lambda self: self._context.get('tarifs_ids'))
     supplier_id = fields.Many2one("res.partner", readonly=True, default=lambda self: self._context.get('supplier_id'))
+
     @api.multi
     def _get_tarif_from_csv(self):
-
         tarif_items = []
         list = enumerate(self.reader_info)
         logging.error('reader_info ' + str(self.reader_info))
         for i, csv_line in list:
-            print ("csv_line", csv_line)
             if i > 0:
                 product_tmpl_id = self.env['product.template'].search([('default_code', '=', csv_line[0])])
                 tarif_item = {}
 
-                tarif_item['min_qty'] = csv_line[3]
+                tarif_item['product_name'] = csv_line[1]
                 tarif_item['product_code'] = csv_line[2]
-                tarif_item['price'] = float(csv_line[4].replace(",","."))
-                # tarif_item['date_start'] = csv_line[5]
-                # tarif_item['date_end'] = csv_line[6]
+                tarif_item['min_qty'] = csv_line[3]
+                tarif_item['max_qty'] = csv_line[4]
+
+                tarif_item['price'] = float(csv_line[5].replace(",","."))
+
+                tarif_item['date_start'] = datetime.datetime.strptime(csv_line[6],'%d/%m/%Y').date()
+                tarif_item['date_end'] = datetime.datetime.strptime(csv_line[7],'%d/%m/%Y').date()
                 if product_tmpl_id:
                     tarif_item['state'] = 'valid'
                     tarif_item['product_tmpl_id'] = product_tmpl_id[0].id
@@ -102,7 +92,7 @@ class TarifImport(models.TransientModel):
 
         csv_data = base64.b64decode(self.data)
         csv_data = BytesIO(csv_data.decode('utf-8').encode('utf-8'))
-        csv_iterator = pycompat.csv_reader(csv_data, delimiter=";")
+        csv_iterator = pycompat.csv_reader(csv_data, delimiter=self.delimeter)
 
         logging.info("csv_iterator" + str(csv_iterator))
 
@@ -113,7 +103,6 @@ class TarifImport(models.TransientModel):
             self.state = 'validated'
         except Exception as e:
             print("Not a valid file!", e)
-        print("supplier_id",self.supplier_id)
         return {
             'name': ('Assignment Sub'),
             'view_type': 'form',
@@ -135,12 +124,15 @@ class TarifImport(models.TransientModel):
 
             tarif_item = {'product_tmpl_id': tarif.product_tmpl_id.id,
                           'min_qty': tarif.min_qty,
+                          'max_qty': tarif.max_qty,
                           'name': self.supplier_id.id,
+                          'product_name': tarif.product_name,
                           'product_code': tarif.product_code,
                           'price': tarif.price,
-                          # 'date_start': tarif.date_start,
-                          # 'date_end': tarif.date_end,
+                          'date_start': tarif.date_start,
+                          'date_end': tarif.date_end,
                           }
+            print ('tarif_item:',tarif_item)
             if tarif.state == 'valid':
                 self.env['product.supplierinfo'].create(tarif_item)
                 tarif_item['state'] = 'imported'

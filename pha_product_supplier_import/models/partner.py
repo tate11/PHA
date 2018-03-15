@@ -16,5 +16,12 @@ class ResPartner(models.Model):
     suppliers_ids = fields.One2many('product.supplierinfo', 'name', string='prix fournisseurs')
 
 
+class ProductSupplierinfor(models.Model):
+    _inherit = ['product.supplierinfo']
+
+    max_qty= fields.Float(
+        'Maximal Quantity', default=0.0, required=True,)
+
+
 
 
