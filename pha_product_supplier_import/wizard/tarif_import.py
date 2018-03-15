@@ -35,9 +35,10 @@ class TarifImport(models.TransientModel):
                          required=True,
                          default=lambda self: self._context.get('data'))
     name = fields.Char('Filename')
-    delimeter = fields.Char('Delimeter',
-                            default=',',
-                            help='Default delimeter is ","')
+    delimeter = fields.Selection([(',', 'Virgule ","'),
+                                  (';', 'Point virgule ";"')]
+                                 ,'Delimeter',
+                            default=',')
 
     lineterminator = fields.Char('Line terminator',
                                  default='\n',
@@ -64,7 +65,7 @@ class TarifImport(models.TransientModel):
             if i > 0:
                 product_tmpl_id = self.env['product.template'].search([('default_code', '=', csv_line[0])])
                 tarif_item = {}
-
+                print ('csv_line:',csv_line)
                 tarif_item['product_name'] = csv_line[1]
                 tarif_item['product_code'] = csv_line[2]
                 tarif_item['min_qty'] = csv_line[3]
@@ -92,7 +93,7 @@ class TarifImport(models.TransientModel):
 
         csv_data = base64.b64decode(self.data)
         csv_data = BytesIO(csv_data.decode('utf-8').encode('utf-8'))
-        csv_iterator = pycompat.csv_reader(csv_data, delimiter=self.delimeter)
+        csv_iterator = pycompat.csv_reader(csv_data, quotechar="'", delimiter=self.delimeter)
 
         logging.info("csv_iterator" + str(csv_iterator))
 

@@ -12,9 +12,13 @@
                         <field name="supplier_id" invisible="1"/>
                     </header>
                     <group attrs="{'invisible':[('state', '!=', 'draft')]}">
-                        <field name="data" string="Fichier csv"/>
-                        <!--<field name="delimeter"/>
-                        <field name="lineterminator"/>-->
+                        <group span="2">
+                            <field name="data" string="Fichier csv"/>
+                        </group>
+                        <group span="1">
+                            <field name="delimeter" widget="radio"/>
+                        </group>
+                        <!--<field name="lineterminator"/>-->
                     </group>
 
                     <field name="tarif_ids" attrs="{'invisible':[('state', 'in', ['draft',])]}">
