@@ -9,7 +9,7 @@
                 <form>
                     <header>
                         <field name="state" widget="statusbar"/>
-                        <field name="supplier_id"/>
+                        <field name="supplier_id" invisible="1"/>
                     </header>
                     <group attrs="{'invisible':[('state', '!=', 'draft')]}">
                         <field name="data" string="Fichier csv"/>
@@ -17,17 +17,15 @@
                         <field name="lineterminator"/>-->
                     </group>
 
-                    <field name="tarif_ids"
-                           attrs="{'invisible':[('state', 'in', ['draft',])]}">
-
-                        <tree create="false"  editable="top">
-                            <field name="product_tmpl_id"></field>
-                            <field name="min_qty"></field>
-                               <field name="max_qty"></field>
-                            <field name="price"></field>
-                            <field name="state"></field>
-                            <field name="date_start"></field>
-                             <field name="date_end"></field>
+                    <field name="tarif_ids" attrs="{'invisible':[('state', 'in', ['draft',])]}">
+                        <tree create="false">
+                            <field name="product_tmpl_id"/>
+                            <field name="min_qty"/>
+                            <field name="max_qty"/>
+                            <field name="price"/>
+                            <!--<field name="date_start"/>-->
+                            <!--<field name="date_end"/>-->
+                            <field name="state"/>
                         </tree>
                     </field>
 
@@ -39,6 +37,7 @@
                                 string="Import"
                                 attrs="{'invisible':[('state', 'in', ['draft','imported'])]}"
                                 class="oe_button oe_form_button oe_highlight"/>
+                        <button special="cancel" string="Close" class="btn-primary"/>
                     </footer>
 
                 </form>
