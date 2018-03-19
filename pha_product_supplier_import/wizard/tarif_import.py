@@ -79,8 +79,8 @@ class TarifImport(models.TransientModel):
 
                 tarif_item['price'] = float(csv_line[5].replace(",","."))
 
-                tarif_item['date_start'] = datetime.datetime.strptime(csv_line[6],'%d/%m/%Y').date()
-                tarif_item['date_end'] = datetime.datetime.strptime(csv_line[7],'%d/%m/%Y').date()
+                # tarif_item['date_start'] = datetime.datetime.strptime(csv_line[6],'%d/%m/%Y').date()
+                # tarif_item['date_end'] = datetime.datetime.strptime(csv_line[7],'%d/%m/%Y').date()
                 if product_tmpl_id:
                     tarif_item['state'] = 'valid'
                     tarif_item['product_tmpl_id'] = product_tmpl_id[0].id
@@ -109,7 +109,7 @@ class TarifImport(models.TransientModel):
         except Exception as e:
             print("Not a valid file!", e)
         return {
-            'name': ('Assignment Sub'),
+            'name': ('Tarifs'),
             'view_type': 'form',
             'view_mode': 'form',
             'res_model': 'tarif.import',
