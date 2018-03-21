@@ -44,7 +44,7 @@
                                 string="Import"
                                 attrs="{'invisible':[('state', 'in', ['draft','imported'])]}"
                                 class="oe_button oe_form_button oe_highlight"/>
-                        <button special="cancel" string="Cancel" />
+                        <button special="cancel" string="Fermer" />
                     </footer>
 
                 </form>
