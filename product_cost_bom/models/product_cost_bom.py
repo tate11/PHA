@@ -36,8 +36,8 @@ class ProductProduct(models.Model):
 
 class ProductVariant(models.Model):
     _inherit = "product.product"
-    
-    
+
+
     @api.multi
     def _compute_cost_from_bom_product(self):
         bom_obj = self.env['mrp.bom']
@@ -55,7 +55,7 @@ class ProductVariant(models.Model):
                             product_qty = line.product_qty
                             cost += (product_qty/bom.product_qty * product_cost)
                         p.cost_price_bom = cost
-                       
+
     cost_price_bom = fields.Float(
         'Cost Incl. BOM', compute='_compute_cost_from_bom_product',
         digits=dp.get_precision('Product Price'),
