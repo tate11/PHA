@@ -109,7 +109,7 @@ class TarifImport(models.TransientModel):
         except Exception as e:
             print("Not a valid file!", e)
         return {
-            'name': ('Assignment Sub'),
+            'name': ('Tarifs'),
             'view_type': 'form',
             'view_mode': 'form',
             'res_model': 'tarif.import',
@@ -149,7 +149,7 @@ class TarifImport(models.TransientModel):
         self.tarif_ids = unvalid_items
         self.state = 'imported'
         return {
-            'name': ('Assignment Sub'),
+            'name': ('Tarifs'),
             'view_type': 'form',
             'view_mode': 'form',
             'res_model': 'tarif.import',

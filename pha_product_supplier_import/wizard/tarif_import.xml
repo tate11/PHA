@@ -44,7 +44,7 @@
                                 string="Import"
                                 attrs="{'invisible':[('state', 'in', ['draft','imported'])]}"
                                 class="oe_button oe_form_button oe_highlight"/>
-                        <button special="cancel" string="Cancel" />
+                        <button special="cancel" string="Fermer" />
                     </footer>
 
                 </form>
@@ -52,7 +52,7 @@
         </record>
 
         <record model="ir.actions.act_window" id="tarif_import_action">
-            <field name="name">Fournisseur Tarifs Import</field>
+            <field name="name"> Import Tarifs Fournisseur </field>
             <field name="res_model">tarif.import</field>
             <field name="view_type">form</field>
             <field name="view_id" ref="tarif_import_form"/>

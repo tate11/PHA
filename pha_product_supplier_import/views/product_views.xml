@@ -15,8 +15,8 @@
                 </xpath>
 
                 <notebook>
-                    <page string="Tarifs Fournisseurs">
-                        <field name="suppliers_ids">
+                    <page string="Tarifs Fournisseurs" attrs="{'invisible': [('supplier', '=', False)]}">
+                        <field name="suppliers_ids" attrs="{'invisible': [('supplier', '=', False)]}">
                             <tree>
                                  <field name="product_code"/>
                                 <field name="product_tmpl_id"/>
