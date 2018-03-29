@@ -19,8 +19,15 @@
                     <field name="stock_inventory_ids"
                            attrs="{'invisible':[('state', 'in', ['draft',])]}">
 
-                        <tree create="false"  editable="top">
+                        <tree create="false"  editable="top" decoration-danger="state == 'field_not_valid'" decoration-success="state == 'product_not_exist'">
+                            <field name="default_code"></field>
                             <field name="name"></field>
+                            <field name="qty"></field>
+                            <field name="travee"/>
+                            <field name="colonne"/>
+                            <field name="etagere"/>
+                            <field name="destockage"/>
+                            <field name="cost"/>
                             <field name="state"></field>
                         </tree>
                     </field>

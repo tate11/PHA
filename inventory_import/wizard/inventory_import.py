@@ -15,15 +15,15 @@ class InventoryImportLine(models.TransientModel):
     colonne = fields.Char(string="colonne")
     name = fields.Char(string = "name")
     default_code = fields.Char('Internal Reference', index=True)
-
-
-
-
-
+    destockage = fields.Boolean(Default=False)
+    cost = fields.Float("Coût")
+    qty = fields.Float(string="Quantity")
 
     state = fields.Selection(selection=[('valid', 'valid'),
                                         ('not_valid', 'Not valid'),
-                                        ('product_not_spec', 'Produit non spécifié'),
+                                        ('field_not_valid', 'Certains champs non valides'),
+                                        ('product_not_exist', 'Produit ầ créer'),
+                                        ('product_exist', 'Produit ầ mettre à jour'),
                                        ],
                             default='valid'
                              )
@@ -65,19 +65,25 @@ class InventoryImport(models.TransientModel):
             if i > 0:
 
                 product_id = self.env['product.product'].search([('default_code', '=', csv_line[0])])
-
-                inv_item['name'] = csv_line[0]
+                standard_price = 0.0 if not product_id else product_id[0].standard_price
                 inv_item = {}
+                inv_item['default_code'] = csv_line[0]
+                inv_item['name'] = csv_line[2]
+                inv_item['travee'] = csv_line[3]
+                inv_item['etagere'] = csv_line[4]
+                inv_item['colonne'] = csv_line[5]
+                inv_item['destockage'] = True if csv_line[1] == "OUI" else False
+                inv_item['cost'] = 1.0 if csv_line[1] == "OUI" else standard_price
+                inv_item['qty'] = csv_line[8]
 
+                if not inv_item['name']:
+                    inv_item['name'] = "Nom à spécifier"
                 if product_id:
-                    inv_item['state'] = 'valid'
-
-
+                    inv_item['state'] = 'product_exist'
                 else:
-                    inv_item['state'] ='product_not_spec'
-
-
-
+                    inv_item['state'] = 'product_not_exist'
+                if not self._is_valid_line(inv_item):
+                    inv_item['state'] = 'field_not_valid'
                 stock_inventory_items.append((0,0,inv_item))
 
         return stock_inventory_items
@@ -127,22 +133,22 @@ class InventoryImport(models.TransientModel):
         for line in self.stock_inventory_ids:
 
             logging.warning('line.state => ' + str(line.state))
+            inv_item = {}
 
-            inv_item = {'product_id': line.product_id.id,
-                        'name': line.name,
-                        }
-            if line.state == 'valid':
+            inv_item['default_code'] = line.default_code
+            inv_item['name'] = line.name
+            inv_item['travee'] = line.travee
+            inv_item['etagere'] = line.etagere
+            inv_item['colonne'] = line.colonne
+
+            if line.state == 'product_not_exist':
+                self.env['product.product'].create(inv_item)
+
+            elif line.state == 'product_not_exist':
+                product_id = self.env['product.product'].search([('default_code', '=', line.default_code)])
+                product_id.write(inv_item)
 
 
-                line_existed = self._check_if_exists(inv_item['product_id'], inv_item['name'])
-                logging.warning('line.product_id => '+str(line.product_id))
-                if not line_existed:
-                    self.env['stock.production.line'].create(inv_item)
-                    inv_item['state'] = 'product_imported'
-                else:
-                    inv_item['state'] = 'lot_exist'
-            else :
-                inv_item['state'] = line.state
             unvalid_items.append((0,0,inv_item))
 
 
@@ -160,14 +166,9 @@ class InventoryImport(models.TransientModel):
             'target': 'new'
         }
 
-
-
-    def _check_if_exists(self, product_id):
-
-        product_id = self.env['product.product'].search(
-            [('id', '=', product_id)])
-
-        if len(product_id) > 0:
-            return product_id
-        else:
-            return False
+    def _is_valid_line(self, line):
+        for  key, value in line.items():
+            logging.warning("item test %s ===> %s", key, value)
+            if not str(value).strip():
+                return False
+        return True
