@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <record id="view_partner_form_gplaces_autocomplete" model="ir.ui.view">
+        <field name="name">Google Places Partner Form</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form"/>
+        <field name="arch" type="xml">
+            <field name="name" position="attributes">
+                <attribute name="widget">gplaces_autocomplete</attribute>
+                <attribute name="options">{'lat': 'partner_latitude', 'lng': 'partner_longitude'}</attribute>
+            </field>
+            <field name="street" position="attributes">
+                <attribute name="widget">gplaces_address_autocomplete</attribute>
+                <attribute name="options">{'lat': 'partner_latitude', 'lng': 'partner_longitude'}</attribute>
+            </field>
+        </field>
+    </record>
+    <record id="view_res_partner_map" model="ir.ui.view">
+        <field name="name">view.res.partner.map</field>
+        <field name="model">res.partner</field>
+        <field name="arch" type="xml">
+            <map class="o_res_partner_map" no_limit="true" string="Map" lat="partner_latitude" lng="partner_longitude" colors="blue:company_type=='person';green:company_type=='company';">
+                <field name="id"/>
+                <field name="name"/>
+                <field name="street"/>
+                <field name="street2"/>
+                <field name="city"/>
+                <field name="zip"/>
+                <field name="email"/>
+                <field name="state_id"/>
+                <field name="country_id"/>
+                <field name="partner_latitude"/>
+                <field name="partner_longitude"/>
+                <field name="company_type"/>
+                <field name="image_small"/>
+                <field name="mobile"/>
+                <field name="phone"/>
+                <field name="type"/>
+                <field name="function"/>
+                <templates>
+                    <t t-name="map-marker-iw">
+                        <div class="gm-iw-container o_map_global_click o_res_partner_map">
+                            <div class="gm-iw-title">
+                                <img t-att-src="map_image('res.partner', 'image_small', record.id.raw_value)"/>
+                                <span><strong><field name="display_name"/></strong></span>
+                            </div>
+                            <div class="gm-iw-details">
+                                <ul>
+                                    <li t-if="record.parent_id.raw_value and !record.function.raw_value"><field name="parent_id"/></li>
+                                    <li t-if="!record.parent_id.raw_value and record.function.raw_value"><field name="function"/></li>
+                                    <li t-if="record.parent_id.raw_value and record.function.raw_value"><field name="function"/> at <field name="parent_id"/></li>
+                                    <li t-if="record.city.raw_value and !record.country_id.raw_value"><field name="city"/></li>
+                                    <li t-if="!record.city.raw_value and record.country_id.raw_value"><field name="country_id"/></li>
+                                    <li t-if="record.city.raw_value and record.country_id.raw_value"><field name="city"/>, <field name="country_id"/></li>
+                                    <li t-if="record.email.raw_value" class="o_text_overflow"><field name="email"/></li>
+                                    <li t-if="record.phone.raw_value">Phone: <field name="phone"/></li>
+                                    <li t-if="record.mobile.raw_value">Mobile: <field name="mobile"/></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </map>
+        </field>
+    </record>
+    <record id="base.action_partner_form" model="ir.actions.act_window">
+        <field name="view_mode">kanban,tree,form,map</field>
+    </record>
+    <record id="action_partner_form_view3" model="ir.actions.act_window.view">
+        <field eval="3" name="sequence"/>
+        <field name="view_mode">map</field>
+        <field name="view_id" ref="view_res_partner_map"/>
+        <field name="act_window_id" ref="base.action_partner_form"/>
+    </record>
+    <record id="action_res_partner_map" model="ir.actions.act_window">
+        <field name="name">Customer Map</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">res.partner</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">map,tree,form</field>
+    </record>
+    <record id="view_partner_form" model="ir.ui.view">
+        <field name="name">Google Places Partner Form</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form"/>
+        <field name="arch" type="xml">
+            <div name="button_box" position="inside">
+                <button name="%(web_google_maps.action_res_partner_map)d" type="action"
+                    class="oe_stat_button" icon="fa-map-marker" string="Map" context="{'search_default_name': name, 'search_default_id': active_id}"
+                    attrs="{'invisible': ['|',('partner_latitude', '=', 0.0), ('partner_longitude', '=', 0.0)]}"/>
+            </div>
+        </field>
+    </record>
+</odoo>
