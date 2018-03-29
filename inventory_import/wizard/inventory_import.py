@@ -8,7 +8,7 @@ from odoo.tools import pycompat
 
 
 class InventoryImportLine(models.TransientModel):
-    _name = "stock.inventory.line"
+    _name = "stock.inventory.import.line"
 
     travee = fields.Char(string="Travée")
     etagere = fields.Char(string="Etagére")
@@ -38,7 +38,7 @@ class InventoryImport(models.TransientModel):
     name = fields.Char('Filename')
     delimeter = fields.Char('Delimeter',
                             default=';',
-                            help='Default delimeter is ","')
+                            help='Default delimeter is ";"')
 
     lineterminator = fields.Char('Line terminator',
                             default='\n',
@@ -52,26 +52,26 @@ class InventoryImport(models.TransientModel):
 
     reader_info = []
 
-    stock_inventory_ids = fields.Many2many('stock.inventory.line',
+    stock_inventory_ids = fields.Many2many('stock.inventory.import.line',
                                                 default=lambda self: self._context.get('stock_inventory_ids'))
     @api.multi
     def _get_stock_inventory_from_csv(self):
-
 
         stock_inventory_items = []
         list = enumerate(self.reader_info)
         logging.error('reader_info '+str(self.reader_info))
         for i, csv_line in list:
+            logging.info("line %s => %s line", i, csv_line)
             if i > 0:
 
                 product_id = self.env['product.product'].search([('default_code', '=', csv_line[0])])
 
-
+                inv_item['name'] = csv_line[0]
                 inv_item = {}
 
                 if product_id:
                     inv_item['state'] = 'valid'
-                    inv_item['product_id'] = product_id[0].id
+
 
                 else:
                     inv_item['state'] ='product_not_spec'
@@ -111,11 +111,11 @@ class InventoryImport(models.TransientModel):
             'name': ('Assignment Sub'),
             'view_type': 'form',
             'view_mode': 'form',
-            'res_model': 'stock.production.lot.import',
+            'res_model': 'stock.inventory.import',
             'view_id': False,
-            'context':{'data':self.data,
-                       'state': self.state,
-                       'stock_production_lot_ids': self._get_stock_prd_lot_from_csv()},
+            'context': {'data':self.data,
+                        'state': self.state,
+                        'stock_inventory_ids': self._get_stock_inventory_from_csv()},
             'type': 'ir.actions.act_window',
             'target':'new'
         }

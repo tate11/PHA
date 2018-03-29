@@ -21,7 +21,6 @@
 
                         <tree create="false"  editable="top">
                             <field name="name"></field>
-                            <field name="product_id"></field>
                             <field name="state"></field>
                         </tree>
                     </field>
@@ -30,7 +29,7 @@
                         <button name="validate" type="object" string="Validate"
                                 class="oe_button oe_form_button oe_highlight"
                                 attrs="{'invisible':[('state', 'in', ['validated','imported'])]}"/>
-                        <button name="import_stock_prd_lots" type="object"
+                        <button name="import_inventory" type="object"
                                 string="Import"
                                 attrs="{'invisible':[('state', 'in', ['draft','imported'])]}"
                                 class="oe_button oe_form_button oe_highlight"/>
