@@ -53,13 +53,11 @@
         <field name="model">product.supplierinfo</field>
         <field name="inherit_id" ref="product.product_supplierinfo_form_view"/>
         <field name="arch" type="xml">
-            <field name="discount" position="after">
-                <group>
-                    <field name="net_price"/>
-                    <field name="state_lowest_price"/>
-                    <field name="state_highest_price"/>
-                </group>
-            </field>
+            <label for="date_start" position="before">
+                <field name="net_price"/>
+                <field name="state_lowest_price"/>
+                <field name="state_highest_price"/>
+            </label>
 
         </field>
     </record>
