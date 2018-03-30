@@ -15,7 +15,7 @@
         'sale_stock',
         ],
     'data': [
-        'wizard/pha_inventory_import.xml'
+        'wizard/inventory_import.xml'
 
     ],
     'demo': [],
