@@ -81,12 +81,12 @@ class InventoryImport(models.TransientModel):
                 inv_item['colonne'] = csv_line[5]
                 inv_item['destockage'] = True if csv_line[1] == "OUI" else False
                 inv_item['cost'] = 1.0 if csv_line[1] == "OUI" else standard_price
-                inv_item['qty'] = csv_line[8]
+                inv_item['qty'] = csv_line[6]
 
 
 
                 if not inv_item['name']:
-                    inv_item['name'] = "Nom à spécifier"
+                    inv_item['name'] = "Article à renseigner"
                 if product_id:
                     inv_item['state'] = 'product_exist'
                 else:
@@ -172,7 +172,9 @@ class InventoryImport(models.TransientModel):
                 product_id[0].write(inv_item)
 
 
-            unvalid_items.append((0,0,inv_item))
+            else:
+                inv_item['state'] = line.state
+                unvalid_items.append((0,0,inv_item))
 
 
         self.state = 'imported'
@@ -180,11 +182,11 @@ class InventoryImport(models.TransientModel):
             'name': ('Assignment Sub'),
             'view_type': 'form',
             'view_mode': 'form',
-            'res_model': 'stock.production.lot.import',
+            'res_model': 'stock.inventory.import',
             'view_id': False,
-            'context': {'data': self.data,
-                        'stock_production_lot_ids': unvalid_items,
-                        'state': self.state},
+            'context': {'default_data': self.data,
+                        'default_stock_inventory_ids': unvalid_items,
+                        'default_state': self.state},
             'type': 'ir.actions.act_window',
             'target': 'new'
         }
