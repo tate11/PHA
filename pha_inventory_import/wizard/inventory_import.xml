@@ -12,14 +12,18 @@
                     </header>
                     <group attrs="{'invisible':[('state', '!=', 'draft')]}">
                         <field name="data" string="Fichier csv"/>
-                        <!--<field name="delimeter"/>
-                        <field name="lineterminator"/>-->
+
+
+                    </group>
+                    <group>
+                        <field name="dest_categ" />
+                        <field name="new_prd_categ" />
                     </group>
 
                     <field name="stock_inventory_ids"
                            attrs="{'invisible':[('state', 'in', ['draft',])]}">
 
-                        <tree create="false"  editable="top" decoration-danger="state == 'field_not_valid'" decoration-success="state == 'product_not_exist'">
+                        <tree create="false"  editable="top" decoration-danger="state in ['field_not_valid', 'product_duplicate']" decoration-success="state == 'product_not_exist'">
                             <field name="default_code"></field>
                             <field name="name"></field>
                             <field name="qty"></field>

@@ -21,9 +21,10 @@ class InventoryImportLine(models.TransientModel):
 
     state = fields.Selection(selection=[('valid', 'valid'),
                                         ('not_valid', 'Not valid'),
-                                        ('field_not_valid', 'Certains champs non valides'),
+                                        ('field_not_valid', 'Certains champs sont pas valides'),
                                         ('product_not_exist', 'Produit ầ créer'),
-                                        ('product_exist', 'Produit ầ mettre à jour'),
+                                        ('product_exist', 'Produit à mettre à jour'),
+                                        ('product_duplicate', 'Doubllons'),
                                        ],
                             default='valid'
                              )
@@ -43,6 +44,9 @@ class InventoryImport(models.TransientModel):
     lineterminator = fields.Char('Line terminator',
                             default='\n',
                             help='Default delimeter is "\n"')
+
+    dest_categ = fields.Many2one("product.category",string="Destockage catégorie", required=True)
+    new_prd_categ = fields.Many2one("product.category", string="Nouveau Produit", required=True)
 
     state = fields.Selection(selection=[('draft', 'Brouillon'),
                                         ('validated', 'Validation'),
@@ -66,6 +70,8 @@ class InventoryImport(models.TransientModel):
 
                 product_id = self.env['product.product'].search([('default_code', '=', csv_line[0])])
                 standard_price = 0.0 if not product_id else product_id[0].standard_price
+
+
                 inv_item = {}
                 inv_item['default_code'] = csv_line[0]
                 inv_item['name'] = csv_line[2]
@@ -76,6 +82,8 @@ class InventoryImport(models.TransientModel):
                 inv_item['cost'] = 1.0 if csv_line[1] == "OUI" else standard_price
                 inv_item['qty'] = csv_line[8]
 
+
+
                 if not inv_item['name']:
                     inv_item['name'] = "Nom à spécifier"
                 if product_id:
@@ -84,6 +92,11 @@ class InventoryImport(models.TransientModel):
                     inv_item['state'] = 'product_not_exist'
                 if not self._is_valid_line(inv_item):
                     inv_item['state'] = 'field_not_valid'
+
+                for item in stock_inventory_items:
+                    if item[2]['default_code'] == csv_line[0]:
+                        inv_item['state'] = "product_duplicate"
+
                 stock_inventory_items.append((0,0,inv_item))
 
         return stock_inventory_items
@@ -121,6 +134,8 @@ class InventoryImport(models.TransientModel):
             'view_id': False,
             'context': {'data':self.data,
                         'state': self.state,
+                        'default_dest_categ': self.dest_categ.id,
+                        'default_new_prd_categ': self.new_prd_categ.id,
                         'stock_inventory_ids': self._get_stock_inventory_from_csv()},
             'type': 'ir.actions.act_window',
             'target':'new'
@@ -140,13 +155,20 @@ class InventoryImport(models.TransientModel):
             inv_item['travee'] = line.travee
             inv_item['etagere'] = line.etagere
             inv_item['colonne'] = line.colonne
+            inv_item['standard_price'] = line.cost
+            inv_item['type'] = 'product'
+
 
             if line.state == 'product_not_exist':
+                if line.destockage:
+                    inv_item['categ_id'] = self.dest_categ.id
+                else:
+                    inv_item['categ_id'] = self.new_prd_categ.id
                 self.env['product.product'].create(inv_item)
 
-            elif line.state == 'product_not_exist':
+            elif line.state == 'product_exist':
                 product_id = self.env['product.product'].search([('default_code', '=', line.default_code)])
-                product_id.write(inv_item)
+                product_id[0].write(inv_item)
 
 
             unvalid_items.append((0,0,inv_item))
