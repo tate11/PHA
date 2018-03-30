@@ -15,7 +15,7 @@
                     <group>
                         <field name="lowest_price"/></group>
                          <group>
-                    <button type="object" name="update_sale_price" string="update sale price"
+                    <button class="oe_highlight" type="object" name="update_sale_price" string="update sale price"
                             confirm="Vous êtes sur le point de modifier le prix de vente!"/>
 
                 </group>
@@ -29,8 +29,14 @@
         <field name="model">product.supplierinfo</field>
         <field name="inherit_id" ref="product.product_supplierinfo_tree_view"/>
         <field name="arch" type="xml">
+            <field name="name" position="after">
+                <field name="product_code"/>
+
+            </field>
             <field name="discount" position="after">
+                  <field name="currency_id"/>
                 <field name="net_price"/>
+
             </field>
             <field name="date_end" position="after">
                 <field name="state_highest_price" invisible="1"/>

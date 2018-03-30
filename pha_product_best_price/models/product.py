@@ -52,6 +52,9 @@ class PriceScale(models.Model):
                                                       ('max_price', '>=', price)])
             if scale_line:
                 return scale_line.coef
+            else:
+                return  1.68
+
         return 1
 
 class ProductTemplate(models.Model):
@@ -87,7 +90,7 @@ class ProductTemplate(models.Model):
     def update_sale_price(self):
         price_scale = self.env['price.scale'].search([('state','=','open')])
 
-        coef = price_scale[0].get_coef(self.highest_price) if price_scale else 1
-
+        # coef = price_scale[0].get_coef(self.highest_price) if price_scale else 1.68
+        coef = price_scale[0].get_coef(self.highest_price)
         self.list_price = coef * self.highest_price
 
