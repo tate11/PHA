@@ -28,7 +28,8 @@ class InventoryImportLine(models.TransientModel):
                                        ],
                             default='valid'
                              )
-            
+
+
 class InventoryImport(models.TransientModel):
     _name = "stock.inventory.import"
 
