@@ -14,40 +14,20 @@ class TarifLine(models.TransientModel):
     product_tmpl_id = fields.Many2one(
         'product.template', 'Product Template',
         index=True, ondelete='cascade', oldname='product_id')
-
-    min_qty = fields.Float(
-        'Minimal Quantity', default=0.0, required=True,
-        help="The minimal quantity to purchase from this vendor, expressed in the vendor Product Unit of Measure if not any, in the default unit of measure of the product otherwise.")
-
-    max_qty= fields.Float(
-        'Maximal Quantity', default=0.0, required=True,)
-
-    product_name = fields.Char(
-        'Vendor Product Name',
-        help="This vendor's product name will be used when printing a request for quotation. Keep empty to use the internal one.")
-
-    product_code = fields.Char(
-        'Vendor Product Code',
-        help="This vendor's product code will be used when printing a request for quotation. Keep empty to use the internal one.")
-
-    price = fields.Float(
-        'Price', default=0.0,
-        required=True, help="The price to purchase a product")
-
-    date_start = fields.Date('Start Date', help="Start date for this vendor price")
-    date_end = fields.Date('End Date', help="End date for this vendor price")
-
-
-
-
-
+    min_qty = fields.Float('Minimal Quantity', default=0.0, required=True)
+    max_qty = fields.Float('Maximal Quantity', default=0.0, required=True)
+    product_name = fields.Char('Vendor Product Name')
+    product_code = fields.Char('Vendor Product Code')
+    price = fields.Float('Price', default=0.0,required=True)
+    discount = fields.Float(string='Discount (%)')
+    currency_id=fields.Many2one('res.currency',string='Devise')
+    date_start = fields.Date('Start Date')
+    date_end = fields.Date('End Date')
     state = fields.Selection(selection=[('valid', 'valid'),
                                         ('not_valid', 'not valid'),
                                         ('imported', 'imported'),
                                         ('not_imported', 'not imported'),
-                                        ],
-                             default='valid'
-                             )
+                                        ],default='valid')
 
 
 class TarifImport(models.TransientModel):
@@ -57,9 +37,17 @@ class TarifImport(models.TransientModel):
                          required=True,
                          default=lambda self: self._context.get('data'))
     name = fields.Char('Filename')
-    delimeter = fields.Char('Delimeter',
-                            default=';',
-                            help='Default delimeter is ","')
+    encoding = fields.Selection([('iso8859_10','Windows Excel'),
+                                  ('latin_1','Europe France'),
+                                  ('iso8859_15','Europe France - Euro'),
+                                  ('iso8859_6','Arabe'),
+                                  ('utf_8','Unicode - utf-8'),
+                                  ('utf_16','Unicode - utf-16'),
+                                  ],'Encodage Caractères ',default='utf_8')
+    delimeter = fields.Selection([(',', 'Virgule ","'),
+                                  (';', 'Point virgule ";"')]
+                                 ,'Delimeter',
+                            default=',')
 
     lineterminator = fields.Char('Line terminator',
                                  default='\n',
@@ -76,12 +64,21 @@ class TarifImport(models.TransientModel):
     tarif_ids = fields.Many2many('tarif.line',
                                  default=lambda self: self._context.get('tarifs_ids'))
     supplier_id = fields.Many2one("res.partner", readonly=True, default=lambda self: self._context.get('supplier_id'))
+
+    @api.multi
+    def _get_currency(self,code):
+        currency= self.env['res.currency'].search([('name','=',code)])
+        if currency:
+            return currency.id
+        else :
+            raise UserError(_("No currency found with code %s" %code))
+
+
+
     @api.multi
     def _get_tarif_from_csv(self):
-
         tarif_items = []
         list = enumerate(self.reader_info)
-        logging.error('reader_info ' + str(self.reader_info))
         for i, csv_line in list:
             if i > 0:
                 product_tmpl_id = self.env['product.template'].search([('default_code', '=', csv_line[0])])
@@ -93,11 +90,11 @@ class TarifImport(models.TransientModel):
                 tarif_item['max_qty'] = csv_line[4]
 
                 tarif_item['price'] = float(csv_line[5].replace(",","."))
-                print('str:', csv_line[6])
-                print('date:', datetime.datetime.strptime(csv_line[6],'%d/%m/%Y').date())
-                #
-                # tarif_item['date_start'] = datetime.datetime.strptime(csv_line[6],'%d/%m/%Y').date()
-                # tarif_item['date_end'] = datetime.datetime.strptime(csv_line[7],'%d/%m/%Y').date()
+                tarif_item['discount'] = float(csv_line[6].replace(",", "."))
+                tarif_item['currency_id'] = self._get_currency(csv_line[7])
+
+                tarif_item['date_start'] = datetime.datetime.strptime(csv_line[8],'%d/%m/%Y').date()
+                tarif_item['date_end'] = datetime.datetime.strptime(csv_line[9],'%d/%m/%Y').date()
                 if product_tmpl_id:
                     tarif_item['state'] = 'valid'
                     tarif_item['product_tmpl_id'] = product_tmpl_id[0].id
@@ -115,10 +112,8 @@ class TarifImport(models.TransientModel):
             raise exceptions.Warning(_("You need to select a file!"))
 
         csv_data = base64.b64decode(self.data)
-        csv_data = BytesIO(csv_data.decode('utf-8').encode('utf-8'))
-        csv_iterator = pycompat.csv_reader(csv_data, delimiter=",")
-
-        logging.info("csv_iterator" + str(csv_iterator))
+        csv_data = BytesIO(csv_data.decode(self.encoding).encode('utf-8'))
+        csv_iterator = pycompat.csv_reader(csv_data, quotechar="'", delimiter=self.delimeter)
 
         try:
             self.reader_info = []
@@ -127,9 +122,8 @@ class TarifImport(models.TransientModel):
             self.state = 'validated'
         except Exception as e:
             print("Not a valid file!", e)
-        print("supplier_id",self.supplier_id)
         return {
-            'name': ('Assignment Sub'),
+            'name': ('Tarifs'),
             'view_type': 'form',
             'view_mode': 'form',
             'res_model': 'tarif.import',
@@ -154,6 +148,8 @@ class TarifImport(models.TransientModel):
                           'product_name': tarif.product_name,
                           'product_code': tarif.product_code,
                           'price': tarif.price,
+                          'discount': tarif.discount,
+                          'currency_id': tarif.currency_id.id,
                           'date_start': tarif.date_start,
                           'date_end': tarif.date_end,
                           }
@@ -169,7 +165,7 @@ class TarifImport(models.TransientModel):
         self.tarif_ids = unvalid_items
         self.state = 'imported'
         return {
-            'name': ('Assignment Sub'),
+            'name': ('Tarifs'),
             'view_type': 'form',
             'view_mode': 'form',
             'res_model': 'tarif.import',
