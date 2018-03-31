@@ -52,9 +52,9 @@ class PriceScale(models.Model):
                                                       ('max_price', '>=', price)])
             if scale_line:
                 return scale_line.coef
-            else:
-                #TODO: rendre le coef standar parametrable, le 1.68 est specific pour le projet pha
-                return  1.68
+
+        #TODO: rendre le coef standar parametrable, le 1.68 est specific pour le projet pha
+        return  1.68
 
 
 
@@ -96,7 +96,17 @@ class ProductTemplate(models.Model):
 
     @api.multi
     def update_sale_price(self):
-        price_scale = self.env['price.scale'].search([('state','=','open')])
-        coef = price_scale[0].get_coef(self.highest_price)
-        self.list_price = coef * self.highest_price
+        for rec in self:
+            logging.info('test : %s' % rec)
+            logging.info('test : %s' % rec[0].highest_price)
+            rec= rec[0]
+            logging.info('test : %s' % rec.highest_price)
+            price_scale = self.env['price.scale'].search([('state','=','open')])
+            coef = price_scale[0].get_coef(rec.highest_price)
+            rec.list_price = coef * rec.highest_price
+            rec.standard_price = rec.lowest_price
 
+    @api.multi
+    def update_all(self):
+        self.ensure_one()
+        self.update_sale_price()
