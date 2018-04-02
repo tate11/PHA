@@ -12,11 +12,12 @@
     'website': "http://www.cadrinsitu.com",
 
 
-    'depends': ['product','product_supplierinfo_discount','sale_management','pha_product_supplier_import'],
+    'depends': ['product','product_supplierinfo_discount','sale_management'],
     'data': [
 
         'views/product_views.xml',
         'views/rate_views.xml',
+        'security/ir.model.access.csv',
     ],
 
     'installable': True,
