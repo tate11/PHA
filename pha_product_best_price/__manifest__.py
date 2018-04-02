@@ -12,7 +12,7 @@
     'website': "http://www.cadrinsitu.com",
 
 
-    'depends': ['product','product_supplierinfo_discount'],
+    'depends': ['product','product_supplierinfo_discount','sale_management'],
     'data': [
 
         'views/product_views.xml',
