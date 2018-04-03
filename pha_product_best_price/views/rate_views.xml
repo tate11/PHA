@@ -6,7 +6,8 @@
 
     <menuitem action="sale_coef_action"
               id="sale_coef_menuitem" name="Coef de vente"
-              parent="sale.menu_sale_config" sequence="7"/>
+              parent="sale.menu_sale_config" sequence="7"
+              groups="base.group_user"/>
 
 
 
