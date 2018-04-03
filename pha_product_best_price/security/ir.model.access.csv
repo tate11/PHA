@@ -1,4 +1,6 @@
 
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-employee,price.scale,model_price_scale,base.group_user,1,1,1,1
-employee,price.scale.line,model_price_scale_line,base.group_user,1,1,1,1
+salesman,price.scale,model_price_scale,sales_team.group_sale_salesman,1,0,0,0
+manager,price.scale,model_price_scale,sales_team.group_sale_manager,1,1,1,1
+salesman,price.scale.line,model_price_scale_line,sales_team.group_sale_salesman,1,0,0,0
+manager,price.scale.line,model_price_scale_line,sales_team.group_sale_manager,1,1,1,1
